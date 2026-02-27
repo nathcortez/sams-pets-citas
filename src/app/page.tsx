@@ -69,9 +69,6 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-[--azul-oscuro] mb-4">
               ¡Cita enviada!
             </h2>
-            <p className="text-[--gris] mb-6">
-              Serás redirigido a WhatsApp para confirmar tu cita con Sam's Pets.
-            </p>
             <button
               onClick={() => {
                 setShowBooking(false);
