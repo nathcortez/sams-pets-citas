@@ -7,7 +7,6 @@ import { BUSINESS_INFO } from '@/types/appointment';
 
 export default function Home() {
   const [showBooking, setShowBooking] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 relative overflow-hidden">
@@ -60,31 +59,13 @@ export default function Home() {
               🐾 Reserva tu cita ahora
             </button>
           </div>
-        ) : showSuccess ? (
-          // Success Message
-          <div className="text-center py-12">
-            <div className="w-20 h-20 mx-auto mb-6 bg-[--verde-limon] rounded-full flex items-center justify-center">
-              <span className="text-4xl">✓</span>
-            </div>
-            <h2 className="text-2xl font-bold text-[--azul-oscuro] mb-4">
-              ¡Cita enviada!
-            </h2>
-            <button
-              onClick={() => {
-                setShowBooking(false);
-                setShowSuccess(false);
-              }
-              }
-              className="text-[--azul-principal] font-medium hover:underline"
-            >
-              Reservar otra cita
-            </button>
-          </div>
         ) : (
           // Booking Flow
           <div className="space-y-6">
             <BookingFlow
-              onComplete={() => setShowSuccess(true)}
+              onComplete={() => {
+                setShowBooking(false);
+              }}
             />
           </div>
         )}
