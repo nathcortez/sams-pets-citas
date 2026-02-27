@@ -62,9 +62,6 @@ export default function TimeSlots({ selected, onSelect }: TimeSlotsProps) {
             🦮 Raza grande
           </button>
         </div>
-        <p className="text-sm text-center text-[--gris] mt-3 font-medium">
-          {breedSize === 'pequena' ? 'Citas de 1 hora' : 'Citas de 1:30 horas'}
-        </p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
