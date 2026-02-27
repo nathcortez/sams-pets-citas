@@ -31,9 +31,6 @@ export default function BookingSummary({
 
   return (
     <div className="bg-white rounded-2xl p-5 shadow-lg space-y-4">
-      <h3 className="text-lg font-semibold text-[--azul-oscuro] mb-4">
-        Resumen de tu cita
-      </h3>
 
       <div className="space-y-3">
         <div className="flex justify-between py-2 border-b border-gray-100">

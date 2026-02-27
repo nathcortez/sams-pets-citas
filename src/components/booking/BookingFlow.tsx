@@ -200,7 +200,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       case 'form':
         return 'Datos de tu mascota';
       case 'summary':
-        return 'Confirma tu cita';
+        return 'Resumen de tu cita';
     }
   };
 
