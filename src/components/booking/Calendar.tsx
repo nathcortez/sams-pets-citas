@@ -3,7 +3,6 @@
 import { DayPicker } from 'react-day-picker';
 import { addDays, startOfDay } from 'date-fns';
 import { es } from 'date-fns/locale';
-import 'react-day-picker/style.css';
 
 interface CalendarProps {
   selected: Date | undefined;
@@ -21,7 +20,14 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
   ];
 
   return (
-    <div className="bg-[--azul-claro]/20 rounded-2xl p-3 shadow-lg border-2 border-[--azul-claro]/30 max-w-[260px] mx-auto">
+    <div style={{
+      backgroundColor: 'rgba(123, 179, 224, 0.2)',
+      borderRadius: '16px',
+      padding: '20px',
+      border: '2px solid rgba(123, 179, 224, 0.3)',
+      maxWidth: '320px',
+      margin: '0 auto'
+    }}>
       <DayPicker
         mode="single"
         selected={selected}
@@ -30,18 +36,18 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
         locale={es}
         classNames={{
           root: 'w-full',
-          caption: 'flex justify-center items-center gap-4 mb-2',
-          month_caption: 'text-center font-semibold text-lg text-[--azul-oscuro]',
-          nav: 'flex gap-2',
-          nav_button: 'text-[--azul-principal] hover:text-[--azul-oscuro]',
-          weekdays: 'flex mb-1',
-          weekday: 'flex-1 text-center text-xs font-bold text-white bg-[--azul-principal] py-1 rounded-md',
-          weeks: 'flex flex-col gap-1',
-          week: 'flex gap-1',
-          day_button: 'flex-1 aspect-square flex items-center justify-center text-sm font-medium rounded-md transition-all',
+          caption: 'flex justify-between items-center w-full mb-3',
+          month_caption: 'text-center font-bold text-xl text-[#2E4A7A]',
+          nav: 'flex gap-1',
+          nav_button: 'text-[#4A6FA5] hover:text-[#2E4A7A] text-xl font-bold px-3 py-1',
+          weekdays: 'flex mb-3 bg-[#4A6FA5] rounded-lg p-1',
+          weekday: 'flex-1 text-center text-white font-bold text-xs py-2',
+          weeks: 'flex flex-col gap-2',
+          week: 'flex gap-2 justify-between',
+          day_button: 'flex-1 aspect-square flex items-center justify-center text-base font-medium rounded-lg transition-all hover:bg-[#7BB3E0]/30',
           selected: 'bg-[#E8943D] text-white font-bold shadow-md',
-          today: 'border-2 border-[--naranja] font-bold text-[--naranja]',
-          disabled: 'bg-gray-100 text-gray-300 cursor-not-allowed',
+          today: 'border-2 border-[#E8943D] font-bold text-[#E8943D]',
+          disabled: 'bg-gray-100 text-gray-300 cursor-not-allowed opacity-50',
         }}
       />
     </div>
