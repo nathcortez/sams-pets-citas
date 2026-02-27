@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sam's Pets Citas
+
+Sistema de reservas de citas para Sam's Pets - Pet Shop & Grooming
+
+## Características
+
+- 🎨 Diseño mobile-first visualmente atractivo
+- 📅 Calendario interactivo para seleccionar fecha
+- ⏰ Selector de horarios (8:00 AM - 3:00 PM, con hora de almuerzo)
+- 📱 Integración con WhatsApp para confirmar citas
+- 🔔 Recordatorios configurables
+- 📊 Panel de administración
+
+## Tecnologías
+
+- Next.js 16 (App Router)
+- Tailwind CSS v4
+- TypeScript
+- Supabase (opcional)
 
 ## Getting Started
 
-First, run the development server:
-
+1. Instala las dependencias:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copia el archivo de configuración:
+```bash
+cp .env.local.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configura Supabase (opcional):
+   - Crea un proyecto en [Supabase](https://supabase.com)
+   - Copia las credenciales a `.env.local`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Ejecuta el servidor de desarrollo:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Abre [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## Panel de Administración
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Accede al panel de administración en [http://localhost:3000/admin](http://localhost:3000/admin)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Configuración
 
-## Deploy on Vercel
+### Horarios
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Edita `src/types/appointment.ts` para modificar los horarios de atención.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Información del negocio
+
+Edita `BUSINESS_INFO` en `src/types/appointment.ts` para cambiar el nombre, dirección, teléfono, etc.
+
+### Colores
+
+Los colores están definidos en `src/app/globals.css`:
+- Azul principal: #4A6FA5
+- Azul oscuro: #2E4A7A
+- Azul claro: #7BB3E0
+- Naranja: #E8943D
+- Amarillo: #F5B731
+- Verde limón: #C5D432
+- Púrpura: #5B4B9E
+
+## Despliegue
+
+```bash
+npm run build
+```
+
+El proyecto está listo para desplegar en Vercel.
