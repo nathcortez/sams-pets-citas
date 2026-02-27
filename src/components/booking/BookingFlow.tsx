@@ -264,7 +264,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
               flex-1 py-3 px-6 font-semibold rounded-xl transition-all
               ${canProceed()
                 ? 'bg-[--naranja] hover:bg-[#d4802f] text-white shadow-lg'
-                : 'bg-[--azul-claro]/50 text-[--gris] cursor-not-allowed'
+                : 'bg-[#c4d4e8] text-[--azul-oscuro] cursor-not-allowed opacity-70'
               }
             `}
           >
