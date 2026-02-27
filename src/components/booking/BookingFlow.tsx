@@ -214,64 +214,75 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       {/* Step content */}
       {renderStep()}
 
-      {/* Progress indicator at bottom */}
-      <div className="flex items-center justify-center gap-2">
-        {['calendar', 'time', 'form', 'summary'].map((s, index) => (
-          <div key={s} className="flex items-center">
-            <div
+      {/* Progress indicator at bottom - hide on summary */}
+      {step !== 'summary' && (
+        <div className="flex items-center justify-center gap-2">
+          {['calendar', 'time', 'form', 'summary'].map((s, index) => (
+            <div key={s} className="flex items-center">
+              <div
+                className={`
+                  w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                  ${step === s
+                    ? 'bg-[--azul-principal] text-white'
+                    : ['calendar', 'time', 'form', 'summary'].indexOf(step) > index
+                      ? 'bg-[--verde-limon] text-[--azul-oscuro]'
+                      : 'bg-gray-200 text-gray-400'
+                  }
+                `}
+              >
+                {index + 1}
+              </div>
+              {index < 3 && (
+                <div
+                  className={`
+                    w-8 h-1 mx-1 rounded
+                    ${['calendar', 'time', 'form', 'summary'].indexOf(step) > index
+                      ? 'bg-[--verde-limon]'
+                      : 'bg-gray-200'
+                    }
+                  `}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Navigation buttons */}
+      <div className="flex gap-3">
+        {step === 'summary' ? (
+          <button
+            onClick={handleBack}
+            className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[--azul-oscuro] font-medium rounded-xl transition-colors"
+          >
+            Atrás
+          </button>
+        ) : (
+          <>
+            {step !== 'calendar' && (
+              <button
+                onClick={handleBack}
+                className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[--azul-oscuro] font-medium rounded-xl transition-colors"
+              >
+                Atrás
+              </button>
+            )}
+            <button
+              onClick={handleNext}
+              disabled={!canProceed()}
               className={`
-                w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
-                ${step === s
-                  ? 'bg-[--azul-principal] text-white'
-                  : ['calendar', 'time', 'form', 'summary'].indexOf(step) > index
-                    ? 'bg-[--verde-limon] text-[--azul-oscuro]'
-                    : 'bg-gray-200 text-gray-400'
+                flex-1 py-3 px-6 font-semibold rounded-xl transition-all
+                ${canProceed()
+                  ? 'bg-[#E8943D] hover:bg-[#d4802f] text-white shadow-lg'
+                  : 'bg-[#E8943D]/60 text-white/80 cursor-not-allowed'
                 }
               `}
             >
-              {index + 1}
-            </div>
-            {index < 3 && (
-              <div
-                className={`
-                  w-8 h-1 mx-1 rounded
-                  ${['calendar', 'time', 'form', 'summary'].indexOf(step) > index
-                    ? 'bg-[--verde-limon]'
-                    : 'bg-gray-200'
-                  }
-                `}
-              />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Navigation buttons */}
-      {step !== 'summary' && (
-        <div className="flex gap-3">
-          {step !== 'calendar' && (
-            <button
-              onClick={handleBack}
-              className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[--azul-oscuro] font-medium rounded-xl transition-colors"
-            >
-              Atrás
+              Continuar
             </button>
-          )}
-          <button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            className={`
-              flex-1 py-3 px-6 font-semibold rounded-xl transition-all
-              ${canProceed()
-                ? 'bg-[#E8943D] hover:bg-[#d4802f] text-white shadow-lg'
-                : 'bg-[#E8943D]/60 text-white/80 cursor-not-allowed'
-              }
-            `}
-          >
-            Continuar
-          </button>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
