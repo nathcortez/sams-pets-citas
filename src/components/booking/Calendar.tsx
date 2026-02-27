@@ -35,7 +35,7 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
           weekday: 'text-center text-sm font-medium text-[--gris] uppercase',
           day: 'text-center',
           day_button: 'mx-auto w-10 h-10 rounded-full flex items-center justify-center text-sm transition-all hover:bg-[--azul-claro]/30',
-          selected: 'bg-[--azul-principal] !text-white rounded-full shadow-md',
+          selected: 'bg-[#E8943D] text-white rounded-full shadow-md font-bold',
           today: 'font-bold text-[--naranja] border-2 border-[--naranja] rounded-full',
           disabled: 'text-gray-300 cursor-not-allowed',
         }}
