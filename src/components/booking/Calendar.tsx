@@ -22,7 +22,7 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
   ];
 
   return (
-    <div className="bg-[--azul-claro]/20 rounded-2xl p-3 shadow-lg border-2 border-[--azul-claro]/30">
+    <div className="bg-[--azul-claro]/20 rounded-2xl p-2 shadow-lg border-2 border-[--azul-claro]/30">
       <DayPicker
         mode="single"
         selected={selected}
@@ -30,15 +30,16 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
         disabled={disabledDays}
         locale={es}
         classNames={{
-          root: 'w-full mx-auto',
-          month_caption: 'text-center font-semibold text-base text-[--azul-oscuro] mb-1',
-          weekday: 'text-center text-xs font-medium text-[--gris] uppercase w-8',
-          day: 'text-center w-8',
-          day_button: 'mx-auto w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all hover:bg-[--azul-claro]/30',
-          selected: 'bg-[#E8943D] text-white rounded-full shadow-md font-bold',
-          today: 'font-bold text-[--naranja] border-2 border-[--naranja] rounded-full',
+          root: 'w-full',
+          month_caption: 'text-center font-semibold text-base text-[--azul-oscuro] mb-2',
+          weekday: 'text-center text-xs font-medium text-[--gris] uppercase w-9 h-9 flex items-center justify-center',
+          day: 'text-center w-9 h-9 p-0',
+          day_button: 'w-full h-full rounded-lg flex items-center justify-center text-sm font-medium transition-all hover:bg-[--azul-claro]/40',
+          selected: 'bg-[#E8943D] text-white rounded-lg shadow-md font-bold',
+          today: 'font-bold text-[--naranja] border-2 border-[--naranja] rounded-lg',
           disabled: 'text-gray-300 cursor-not-allowed',
-          weeks: 'gap-0',
+          month_grid: 'gap-0',
+          week: 'gap-0',
         }}
         components={{
           Chevron: ({ orientation }) => {
