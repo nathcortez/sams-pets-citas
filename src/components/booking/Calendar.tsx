@@ -42,7 +42,7 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
           nav_button: 'text-[#9CA3AF] hover:text-[#4A6FA5] text-2xl font-light w-11 h-11 flex items-center justify-center transition-colors duration-200',
           weekdays: 'flex w-full mb-3',
           weekday: 'flex-1 text-center text-[#9CA3AF] font-medium text-xs uppercase tracking-wider',
-          weeks: 'flex flex-col w-full',
+          weeks: 'flex flex-col w-full mb-6',
           week: 'flex w-full gap-1',
           day_button: 'flex-1 aspect-square flex items-center justify-center text-base font-normal text-[#374151] rounded-full transition-all duration-200 min-h-[44px] hover:bg-[#F3F4F6]',
           selected: 'bg-[#4A6FA5] text-white font-medium hover:bg-[#4A6FA5]',
