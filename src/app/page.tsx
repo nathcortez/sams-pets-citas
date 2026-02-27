@@ -86,13 +86,6 @@ export default function Home() {
         ) : (
           // Booking Flow
           <div className="space-y-6">
-            <button
-              onClick={() => setShowBooking(false)}
-              className="flex items-center gap-2 text-[--azul-principal] hover:text-[--azul-oscuro] font-medium"
-            >
-              ← Volver
-            </button>
-
             <BookingFlow
               onComplete={() => setShowSuccess(true)}
             />

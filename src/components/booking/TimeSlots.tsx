@@ -39,11 +39,11 @@ export default function TimeSlots({ selected, onSelect }: TimeSlotsProps) {
     <div className="bg-white rounded-2xl p-4 shadow-lg">
       {/* Breed size selector */}
       <div className="mb-4">
-        <p className="text-sm text-[--gris] mb-2 text-center">¿Qué tamaño es tu mascota?</p>
+        <p className="text-base font-bold text-[--azul-oscuro] mb-3 text-center">¿Qué tamaño es tu mascota?</p>
         <div className="flex gap-3">
           <button
             onClick={() => setBreedSize('pequena')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all ${
+            className={`flex-1 py-4 px-4 rounded-xl text-base font-bold transition-all ${
               breedSize === 'pequena'
                 ? 'bg-[#E8943D] text-white shadow-md'
                 : 'bg-[--azul-claro]/30 text-[--azul-oscuro] hover:bg-[--azul-claro]/50'
@@ -53,7 +53,7 @@ export default function TimeSlots({ selected, onSelect }: TimeSlotsProps) {
           </button>
           <button
             onClick={() => setBreedSize('grande')}
-            className={`flex-1 py-2 px-4 rounded-xl text-sm font-medium transition-all ${
+            className={`flex-1 py-4 px-4 rounded-xl text-base font-bold transition-all ${
               breedSize === 'grande'
                 ? 'bg-[#E8943D] text-white shadow-md'
                 : 'bg-[--azul-claro]/30 text-[--azul-oscuro] hover:bg-[--azul-claro]/50'
@@ -62,7 +62,7 @@ export default function TimeSlots({ selected, onSelect }: TimeSlotsProps) {
             🦮 Raza grande
           </button>
         </div>
-        <p className="text-xs text-center text-[--gris] mt-2">
+        <p className="text-sm text-center text-[--gris] mt-3 font-medium">
           {breedSize === 'pequena' ? 'Citas de 1 hora' : 'Citas de 1:30 horas'}
         </p>
       </div>
