@@ -21,10 +21,11 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
 
   return (
     <div style={{
-      backgroundColor: 'rgba(123, 179, 224, 0.2)',
+      backgroundColor: 'white',
       borderRadius: '16px',
       padding: '20px',
-      border: '2px solid rgba(123, 179, 224, 0.3)',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      border: '2px solid #7BB3E0',
       maxWidth: '320px',
       margin: '0 auto'
     }}>
