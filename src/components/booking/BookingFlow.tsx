@@ -206,7 +206,15 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
 
   return (
     <div className="space-y-6">
-      {/* Progress indicator */}
+      {/* Step title at top */}
+      <h2 className="text-xl font-bold text-[--azul-oscuro] text-center">
+        {getStepTitle()}
+      </h2>
+
+      {/* Step content */}
+      {renderStep()}
+
+      {/* Progress indicator at bottom */}
       <div className="flex items-center justify-center gap-2">
         {['calendar', 'time', 'form', 'summary'].map((s, index) => (
           <div key={s} className="flex items-center">
@@ -238,14 +246,6 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
         ))}
       </div>
 
-      {/* Step title */}
-      <h2 className="text-xl font-bold text-[--azul-oscuro] text-center">
-        {getStepTitle()}
-      </h2>
-
-      {/* Step content */}
-      {renderStep()}
-
       {/* Navigation buttons */}
       {step !== 'summary' && (
         <div className="flex gap-3">
@@ -263,8 +263,8 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
             className={`
               flex-1 py-3 px-6 font-semibold rounded-xl transition-all
               ${canProceed()
-                ? 'bg-[--azul-principal] hover:bg-[--azul-oscuro] text-white shadow-lg'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-[--naranja] hover:bg-[#d4802f] text-white shadow-lg'
+                : 'bg-[--azul-claro]/50 text-[--gris] cursor-not-allowed'
               }
             `}
           >

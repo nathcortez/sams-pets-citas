@@ -22,7 +22,7 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
   ];
 
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-lg">
+    <div className="bg-[--azul-claro]/20 rounded-2xl p-4 shadow-lg border-2 border-[--azul-claro]/30">
       <DayPicker
         mode="single"
         selected={selected}
@@ -34,7 +34,7 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
           month_caption: 'text-center font-semibold text-lg text-[--azul-oscuro] mb-2',
           weekday: 'text-center text-sm font-medium text-[--gris] uppercase',
           day: 'text-center',
-          day_button: 'mx-auto w-10 h-10 rounded-full flex items-center justify-center text-sm transition-all hover:bg-[--azul-claro]/20',
+          day_button: 'mx-auto w-10 h-10 rounded-full flex items-center justify-center text-sm transition-all hover:bg-[--azul-claro]/30',
           selected: '!bg-[--azul-principal] !text-white hover:!bg-[--azul-oscuro]',
           today: 'font-bold text-[--naranja]',
           disabled: 'text-gray-300 cursor-not-allowed',
@@ -48,9 +48,6 @@ export default function Calendar({ selected, onSelect }: CalendarProps) {
           }
         }}
       />
-      <p className="text-center text-sm text-[--gris] mt-3">
-        Selecciona una fecha disponible
-      </p>
     </div>
   );
 }
