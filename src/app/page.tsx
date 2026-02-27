@@ -10,14 +10,7 @@ export default function Home() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[--azul-claro]/40 via-[--azul-principal]/20 to-[--naranja]/20 relative overflow-hidden">
-      {/* Paw prints pattern */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: `url('/huellas.png')`,
-        backgroundSize: '150px 150px',
-        backgroundRepeat: 'repeat',
-        opacity: 0.15,
-      }} />
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 relative overflow-hidden">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md shadow-sm">
         <div className="max-w-md mx-auto px-4 py-3">
