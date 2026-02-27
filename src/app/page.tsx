@@ -66,41 +66,13 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Info Cards */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white rounded-2xl p-4 shadow-md">
-                <div className="text-3xl mb-2">✂️</div>
-                <h3 className="font-semibold text-[--azul-oscuro]">Grooming</h3>
-                <p className="text-sm text-[--gris]">Corte y baño</p>
-              </div>
-              <div className="bg-white rounded-2xl p-4 shadow-md">
-                <div className="text-3xl mb-2">💆</div>
-                <h3 className="font-semibold text-[--azul-oscuro]">Spa</h3>
-                <p className="text-sm text-[--gris]">Tratamientos especiales</p>
-              </div>
-            </div>
-
-            {/* Business Info */}
-            <div className="bg-white rounded-2xl p-4 shadow-md">
-              <h3 className="font-semibold text-[--azul-oscuro] mb-3">Información de contacto</h3>
-              <div className="space-y-2 text-sm text-[--gris]">
-                <p>📍 {BUSINESS_INFO.location}</p>
-                <p>📞 {BUSINESS_INFO.phone}</p>
-                <p>📷 {BUSINESS_INFO.instagram}</p>
-              </div>
-            </div>
-
-            {/* CTA Button */}
+            {/* CTA Button - prominent */}
             <button
               onClick={() => setShowBooking(true)}
-              className="w-full py-4 px-6 bg-[--azul-principal] hover:bg-[--azul-oscuro] text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02]"
+              className="w-full py-5 px-6 bg-[--naranja] hover:bg-[#d4802f] text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-2xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-3"
             >
-              Reservar cita ahora
+              🐾 Reservar cita ahora
             </button>
-
-            <p className="text-center text-sm text-[--gris]">
-              🐾 Tu mascota en las mejores manos
-            </p>
           </div>
         ) : showSuccess ? (
           // Success Message
