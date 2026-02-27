@@ -45,6 +45,16 @@ export default function Home() {
                 priority
                 unoptimized
               />
+              {/* Logo overlay */}
+              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-lg">
+                <Image
+                  src="/logo-samspets.png"
+                  alt="Sam's Pets Logo"
+                  width={80}
+                  height={80}
+                  className="rounded-lg"
+                />
+              </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                 <h1 className="text-3xl font-bold mb-2">
