@@ -133,10 +133,6 @@ export default function BookingSummary({
           </svg>
           {isSending ? 'Enviando...' : 'Confirmar cita por WhatsApp'}
         </a>
-
-        <p className="text-xs text-center text-[--gris] mt-3">
-          Serás redirigido a WhatsApp para confirmar tu cita
-        </p>
       </div>
     </div>
   );
