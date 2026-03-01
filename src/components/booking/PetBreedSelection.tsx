@@ -8,6 +8,16 @@ interface PetBreedSelectionProps {
   onSelect: (breed: PetBreed) => void;
 }
 
+// Función para mostrar el nombre del tamaño correctamente
+function formatSizeLabel(size: PetSize): string {
+  const labels: Record<PetSize, string> = {
+    pequeno: 'Pequeño',
+    mediano: 'Mediano',
+    grande: 'Grande'
+  };
+  return labels[size];
+}
+
 export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedSelectionProps) {
   const [activeTab, setActiveTab] = useState<PetSize>('pequeno');
   const [showOtherInput, setShowOtherInput] = useState(false);
@@ -37,11 +47,6 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
 
   return (
     <div className="space-y-6">
-      {/* Pregunta principal */}
-      <h3 className="text-lg font-semibold text-[--azul-oscuro] text-center">
-        ¿Qué tipo de mascota tienes?
-      </h3>
-
       {/* Tabs de tamaño */}
       <div className="flex gap-2 justify-center">
         {(['pequeno', 'mediano', 'grande'] as PetSize[]).map((size) => (
@@ -49,14 +54,14 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
             key={size}
             onClick={() => setActiveTab(size)}
             className={`
-              px-4 py-2 rounded-full text-sm font-medium transition-all capitalize
+              px-4 py-2 rounded-full text-sm font-medium transition-all
               ${activeTab === size
                 ? 'bg-[#E8943D] text-white shadow-md'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }
             `}
           >
-            {size}
+            {formatSizeLabel(size)}
           </button>
         ))}
       </div>
@@ -116,14 +121,14 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
                   key={size}
                   onClick={() => setOtherBreedSize(size)}
                   className={`
-                    flex-1 py-2 rounded-lg text-sm font-medium capitalize transition-all
+                    flex-1 py-2 rounded-lg text-sm font-medium transition-all
                     ${otherBreedSize === size
                       ? 'bg-[#E8943D] text-white'
                       : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
                     }
                   `}
                 >
-                  {size}
+                  {formatSizeLabel(size)}
                 </button>
               ))}
             </div>

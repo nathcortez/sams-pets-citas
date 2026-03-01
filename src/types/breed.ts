@@ -94,7 +94,7 @@ export const SERVICES: Service[] = [
     id: 'paquete-completo',
     name: 'Paquete completo',
     icon: '⭐',
-    description: 'Baño + corte + uñas + oídos + dental',
+    description: 'Baño + corte + uñas + oídos',
     additionalTimeMinutes: 105,
   },
   {

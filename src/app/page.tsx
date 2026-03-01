@@ -13,7 +13,7 @@ export default function Home() {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md shadow-sm">
         <div className="max-w-md mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-[--azul-oscuro] text-center">
+          <h1 className="text-2xl font-bold text-[--azul-oscuro] text-center">
             Sistema de citas de Sam's Pets
           </h1>
         </div>
@@ -56,7 +56,7 @@ export default function Home() {
               onClick={() => setShowBooking(true)}
               className="w-full py-5 px-6 bg-[#E8943D] hover:bg-[#d4802f] text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-2xl transition-all transform hover:scale-[1.02] flex items-center justify-center gap-3"
             >
-              🐾 Reserva tu cita ahora
+              Reserva tu cita ahora 🐾
             </button>
           </div>
         ) : (

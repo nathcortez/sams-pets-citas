@@ -24,13 +24,15 @@ export interface Appointment {
   id: string;
   createdAt: string;
   petName: string;
-  petBreedAge: string;
+  petBreedAge?: string;
   petBreed?: string; // Nombre de la raza seleccionada
+  petBreedEmoji?: string; // Emoji de la raza seleccionada
   petSize?: string; // Tamaño: pequeno, mediano, grande
   baseTimeMinutes?: number; // Tiempo base de la raza
   serviceId?: string; // ID del servicio seleccionado
   serviceName?: string; // Nombre del servicio
   serviceAdditionalTime?: number; // Tiempo adicional del servicio
+  recoveryTime?: number; // Tiempo de recuperación de manto
   ownerName: string;
   whatsapp: string;
   comments?: string;

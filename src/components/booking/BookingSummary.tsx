@@ -20,7 +20,7 @@ export default function BookingSummary({
 
   const formattedDate = format(new Date(appointment.date), "EEEE d 'de' MMMM 'de' yyyy", {
     locale: es,
-  });
+  }).replace(/De/g, 'de');
 
   const formatTime = (time: string): string => {
     const [hour, minute] = time.split(':').map(Number);
@@ -29,13 +29,23 @@ export default function BookingSummary({
     return `${displayHour}:${minute.toString().padStart(2, '0')} ${period}`;
   };
 
+  const formatDuration = (minutes: number): string => {
+    if (minutes < 60) return `${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    if (mins === 0) return `${hours} hora${hours > 1 ? 's' : ''}`;
+    return `${hours} hora${hours > 1 ? 's' : ''} ${mins} min`;
+  };
+
+  const totalDuration = (appointment.baseTimeMinutes || 45) + (appointment.serviceAdditionalTime || 0);
+
   return (
     <div className="bg-white rounded-2xl p-5 shadow-lg space-y-4">
 
       <div className="space-y-3">
         <div className="flex justify-between py-2 border-b border-gray-100">
           <span className="text-[--gris]">📅 Fecha</span>
-          <span className="font-medium text-[--azul-oscuro] capitalize">
+          <span className="font-medium text-[--azul-oscuro]">
             {formattedDate}
           </span>
         </div>
@@ -47,6 +57,22 @@ export default function BookingSummary({
           </span>
         </div>
 
+        {appointment.serviceName && (
+          <div className="flex justify-between py-2 border-b border-gray-100">
+            <span className="text-[--gris]">🛁 Servicio</span>
+            <span className="font-medium text-[--azul-oscuro]">
+              {appointment.serviceName}
+            </span>
+          </div>
+        )}
+
+        <div className="flex justify-between py-2 border-b border-gray-100">
+          <span className="text-[--gris]">⏱️ Duración</span>
+          <span className="font-medium text-[--azul-oscuro]">
+            {formatDuration(totalDuration)}
+          </span>
+        </div>
+
         <div className="flex justify-between py-2 border-b border-gray-100">
           <span className="text-[--gris]">🐕 Mascota</span>
           <span className="font-medium text-[--azul-oscuro]">
@@ -55,9 +81,9 @@ export default function BookingSummary({
         </div>
 
         <div className="flex justify-between py-2 border-b border-gray-100">
-          <span className="text-[--gris]">🐾 Raza/Edad</span>
+          <span className="text-[--gris]">🐾 Raza</span>
           <span className="font-medium text-[--azul-oscuro]">
-            {appointment.petBreedAge}
+            {appointment.petBreedEmoji} {appointment.petBreed}
           </span>
         </div>
 

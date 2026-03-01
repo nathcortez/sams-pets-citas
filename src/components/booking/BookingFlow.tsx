@@ -16,12 +16,13 @@ interface BookingFlowProps {
   onComplete?: (appointment: Appointment) => void;
 }
 
-type Step = 'breed' | 'service' | 'calendar' | 'time' | 'form' | 'summary';
+type Step = 'breed' | 'service' | 'calendar' | 'form' | 'summary';
 
 export default function BookingFlow({ onComplete }: BookingFlowProps) {
   const [step, setStep] = useState<Step>('breed');
   const [selectedBreed, setSelectedBreed] = useState<PetBreed | undefined>();
   const [selectedService, setSelectedService] = useState<Service | undefined>();
+  const [showRecovery, setShowRecovery] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [formData, setFormData] = useState({
@@ -37,7 +38,6 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
   const isValidForm = () => {
     return (
       formData.petName.trim() !== '' &&
-      formData.petBreedAge.trim() !== '' &&
       formData.ownerName.trim() !== '' &&
       formData.whatsapp.trim() !== ''
     );
@@ -48,9 +48,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       setStep('service');
     } else if (step === 'service' && selectedService) {
       setStep('calendar');
-    } else if (step === 'calendar' && selectedDate) {
-      setStep('time');
-    } else if (step === 'time' && selectedTime) {
+    } else if (step === 'calendar' && selectedDate && selectedTime) {
       setStep('form');
     } else if (step === 'form' && isValidForm()) {
       setStep('summary');
@@ -62,10 +60,8 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       setStep('breed');
     } else if (step === 'calendar') {
       setStep('service');
-    } else if (step === 'time') {
-      setStep('calendar');
     } else if (step === 'form') {
-      setStep('time');
+      setStep('calendar');
     } else if (step === 'summary') {
       setStep('form');
     }
@@ -78,11 +74,13 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       pet_name: formData.petName,
       pet_breed_age: formData.petBreedAge,
       pet_breed: selectedBreed?.name,
+      pet_breed_emoji: selectedBreed?.emoji,
       pet_size: selectedBreed?.size,
       base_time_minutes: selectedBreed?.baseTimeMinutes,
       service_id: selectedService?.id,
       service_name: selectedService?.name,
       service_additional_time: selectedService?.additionalTimeMinutes,
+      recovery_time: showRecovery ? 45 : 0,
       owner_name: formData.ownerName,
       whatsapp: formData.whatsapp,
       comments: formData.comments || null,
@@ -111,10 +109,12 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
         petName: formData.petName,
         petBreedAge: formData.petBreedAge,
         petBreed: selectedBreed?.name,
+        petBreedEmoji: selectedBreed?.emoji,
         petSize: selectedBreed?.size,
         serviceId: selectedService?.id,
         serviceName: selectedService?.name,
         serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+        recoveryTime: showRecovery ? 45 : 0,
         baseTimeMinutes: selectedBreed?.baseTimeMinutes,
         ownerName: formData.ownerName,
         whatsapp: formData.whatsapp,
@@ -139,10 +139,12 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
         petName: formData.petName,
         petBreedAge: formData.petBreedAge,
         petBreed: selectedBreed?.name,
+        petBreedEmoji: selectedBreed?.emoji,
         petSize: selectedBreed?.size,
         serviceId: selectedService?.id,
         serviceName: selectedService?.name,
         serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+        recoveryTime: showRecovery ? 45 : 0,
         baseTimeMinutes: selectedBreed?.baseTimeMinutes,
         ownerName: formData.ownerName,
         whatsapp: formData.whatsapp,
@@ -175,6 +177,8 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
             selectedService={selectedService}
             baseTimeMinutes={selectedBreed?.baseTimeMinutes || 45}
             onSelect={setSelectedService}
+            showRecovery={showRecovery}
+            onRecoveryChange={setShowRecovery}
           />
         );
       case 'calendar':
@@ -182,13 +186,11 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
           <Calendar
             selected={selectedDate}
             onSelect={setSelectedDate}
-          />
-        );
-      case 'time':
-        return (
-          <TimeSlots
-            selected={selectedTime}
-            onSelect={setSelectedTime}
+            selectedBreed={selectedBreed}
+            selectedService={selectedService}
+            recoveryTimeMinutes={showRecovery ? 45 : 0}
+            selectedTime={selectedTime}
+            onTimeSelect={setSelectedTime}
           />
         );
       case 'form':
@@ -206,12 +208,13 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
               id: '',
               createdAt: '',
               petName: formData.petName,
-              petBreedAge: formData.petBreedAge,
               petBreed: selectedBreed?.name,
+              petBreedEmoji: selectedBreed?.emoji,
               petSize: selectedBreed?.size,
-        serviceId: selectedService?.id,
-        serviceName: selectedService?.name,
-        serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+              serviceId: selectedService?.id,
+              serviceName: selectedService?.name,
+              serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+        recoveryTime: showRecovery ? 45 : 0,
               baseTimeMinutes: selectedBreed?.baseTimeMinutes,
               ownerName: formData.ownerName,
               whatsapp: formData.whatsapp,
@@ -235,9 +238,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       case 'service':
         return !!selectedService;
       case 'calendar':
-        return !!selectedDate;
-      case 'time':
-        return !!selectedTime;
+        return !!selectedDate && !!selectedTime;
       case 'form':
         return isValidForm();
       case 'summary':
@@ -254,9 +255,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       case 'service':
         return 'Selecciona el servicio';
       case 'calendar':
-        return 'Selecciona una fecha';
-      case 'time':
-        return 'Elige un horario';
+        return 'Selecciona fecha y hora';
       case 'form':
         return 'Datos de tu mascota';
       case 'summary':
@@ -277,27 +276,27 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
       {/* Progress indicator at bottom - hide on summary */}
       {step !== 'summary' && (
         <div className="flex items-center justify-center gap-2">
-          {['breed', 'service', 'calendar', 'time', 'form', 'summary'].map((s, index) => (
+          {['breed', 'service', 'calendar', 'form'].map((s, index, arr) => (
             <div key={s} className="flex items-center">
               <div
                 className={`
-                  w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                  w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all
                   ${step === s
-                    ? 'bg-[--azul-principal] text-white'
-                    : ['breed', 'service', 'calendar', 'time', 'form', 'summary'].indexOf(step) > index
-                      ? 'bg-[--verde-limon] text-[--azul-oscuro]'
-                      : 'bg-gray-200 text-gray-400'
+                    ? 'bg-[#E8943D] text-white shadow-lg scale-110'
+                    : ['breed', 'service', 'calendar', 'form'].indexOf(step) > index
+                      ? 'bg-[#E8943D]/20 text-[#E8943D]'
+                      : 'bg-gray-100 text-gray-400'
                   }
                 `}
               >
                 {index + 1}
               </div>
-              {index < 5 && (
+              {index < arr.length - 1 && (
                 <div
                   className={`
-                    w-8 h-1 mx-1 rounded
-                    ${['breed', 'service', 'calendar', 'time', 'form', 'summary'].indexOf(step) > index
-                      ? 'bg-[--verde-limon]'
+                    w-12 h-1 mx-1 rounded transition-all
+                    ${['breed', 'service', 'calendar', 'form'].indexOf(step) > index
+                      ? 'bg-[#E8943D]'
                       : 'bg-gray-200'
                     }
                   `}
@@ -319,7 +318,7 @@ export default function BookingFlow({ onComplete }: BookingFlowProps) {
           </button>
         ) : (
           <>
-            {step !== 'breed' && step !== 'service' && (
+            {step !== 'breed' && (
               <button
                 onClick={handleBack}
                 className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[--azul-oscuro] font-medium rounded-xl transition-colors"
