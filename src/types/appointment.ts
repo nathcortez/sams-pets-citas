@@ -1,10 +1,36 @@
 export type AppointmentStatus = 'pendiente' | 'confirmada' | 'completada' | 'cancelada';
 
+export interface RescheduleEntry {
+  from: string;
+  to: string;
+  date: string;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  whatsapp: string;
+  createdAt: string;
+}
+
+export interface Pet {
+  id: string;
+  clientId: string;
+  name: string;
+  breed: string;
+}
+
 export interface Appointment {
   id: string;
   createdAt: string;
   petName: string;
   petBreedAge: string;
+  petBreed?: string; // Nombre de la raza seleccionada
+  petSize?: string; // Tamaño: pequeno, mediano, grande
+  baseTimeMinutes?: number; // Tiempo base de la raza
+  serviceId?: string; // ID del servicio seleccionado
+  serviceName?: string; // Nombre del servicio
+  serviceAdditionalTime?: number; // Tiempo adicional del servicio
   ownerName: string;
   whatsapp: string;
   comments?: string;
@@ -12,6 +38,9 @@ export interface Appointment {
   date: string; // YYYY-MM-DD
   time: string; // HH:MM
   status: AppointmentStatus;
+  // Campos para re-agendamiento
+  originalDate?: string; // Fecha original antes de re-agendar
+  rescheduleHistory?: RescheduleEntry[]; // Historial de cambios
 }
 
 export interface BusinessInfo {
