@@ -73,15 +73,14 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
             key={breed.name}
             onClick={() => handleBreedSelect(breed)}
             className={`
-              flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all min-h-[80px]
+              flex items-center justify-center py-4 px-3 rounded-xl border-2 transition-all
               ${selectedBreed?.name === breed.name && selectedBreed?.size === breed.size
                 ? 'border-[#E8943D] bg-[#E8943D]/10'
                 : 'border-gray-200 hover:border-[#E8943D]/50 bg-white hover:bg-gray-50'
               }
             `}
           >
-            <span className="text-3xl mb-1">{breed.emoji}</span>
-            <span className="text-xs font-medium text-gray-700 text-center leading-tight">
+            <span className="text-sm font-medium text-gray-700 text-center">
               {breed.name}
             </span>
           </button>

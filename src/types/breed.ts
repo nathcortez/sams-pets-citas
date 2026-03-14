@@ -56,18 +56,11 @@ export interface Service {
 
 export const SERVICES: Service[] = [
   {
-    id: 'bano-basico',
-    name: 'Baño básico',
-    icon: '🛁',
-    description: 'Baño con shampoo, secado y cepillado',
-    additionalTimeMinutes: 30,
-  },
-  {
     id: 'bano-corte',
     name: 'Baño + Corte',
     icon: '✂️',
     description: 'Baño completo más corte de pelo al estilo de la raza',
-    additionalTimeMinutes: 60,
+    additionalTimeMinutes: 30,
   },
   {
     id: 'corte-unas',
@@ -95,7 +88,14 @@ export const SERVICES: Service[] = [
     name: 'Paquete completo',
     icon: '⭐',
     description: 'Baño + corte + uñas + oídos',
-    additionalTimeMinutes: 105,
+    additionalTimeMinutes: 75,
+  },
+  {
+    id: 'paquete-mensual',
+    name: 'Paquete mensual',
+    icon: '📅',
+    description: 'Sesión correspondiente a paquete mensual',
+    additionalTimeMinutes: 75,
   },
   {
     id: 'antipulgas',

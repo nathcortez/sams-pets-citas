@@ -56,67 +56,82 @@ function getTotalTimeMinutes(breed?: PetBreed, service?: Service, recoveryMinute
   return baseTime + serviceTime + recoveryTime;
 }
 
+// Calcular la duración total de una cita existente en la base de datos
+function getExistingAppointmentDuration(apt: Appointment): number {
+  // Tiempo base de la raza (default 60 min si no está definido)
+  const baseTime = apt.baseTimeMinutes || 60;
+  // Tiempo adicional del servicio
+  const serviceTime = apt.serviceAdditionalTime || 0;
+  // Tiempo de recuperación de manto (si aplica)
+  const recoveryTime = apt.recoveryTime || 0;
+  return baseTime + serviceTime + recoveryTime;
+}
+
 // Verificar si un horario está disponible
 function isSlotAvailable(
   slot: string,
   date: Date,
-  totalMinutes: number,
+  newAppointmentDuration: number,
   appointments: Appointment[]
 ): boolean {
   const [slotHour, slotMinute] = slot.split(':').map(Number);
-  const slotStart = new Date(date);
-  slotStart.setHours(slotHour, slotMinute, 0, 0);
+  const slotStartMinutes = slotHour * 60 + slotMinute;
+  const slotEndMinutes = slotStartMinutes + newAppointmentDuration;
 
-  const slotEnd = addMinutes(slotStart, totalMinutes);
+  // Horas de almuerzo: 13:00 - 14:00 (bloqueado)
+  const lunchStartMinutes = 13 * 60; // 780
+  const lunchEndMinutes = 14 * 60;   // 840
 
-  // Horas de almuerzo: 13:00 - 14:00
-  const lunchStart = new Date(date);
-  lunchStart.setHours(13, 0, 0, 0);
-  const lunchEnd = new Date(date);
-  lunchEnd.setHours(14, 0, 0, 0);
+  // Última hora de inicio: 15:00 (3:00 PM)
+  const lastPossibleStartMinutes = 15 * 60; // 900
 
-  // Verificar si el slot se sobrepone con el almuerzo
-  // La cita NO debe:
-  // 1. Iniciar durante el almuerzo (13:00-14:00)
-  // 2. Terminar durante el almuerzo
-  // 3. Ejecutarse durante el almuerzo (empezar antes y terminar después)
-
-  // Para horarios de la MAÑANA (antes de las 13:00): deben terminar ANTES del almuerzo
-  const isMorningSlot = slotStart.getHours() < 13;
-  const morningSlotEndsDuringLunch = slotEnd.getHours() >= 13 || (slotEnd.getHours() === 12 && slotEnd.getMinutes() > 0);
-
-  if (isMorningSlot && morningSlotEndsDuringLunch) {
+  // El horario de inicio no puede ser después de las 15:00
+  if (slotStartMinutes > lastPossibleStartMinutes) {
     return false;
   }
 
-  // Para cualquier horario: no debe iniciar ni terminar durante el almuerzo
-  if (
-    isWithinInterval(slotStart, { start: lunchStart, end: lunchEnd }) ||
-    isWithinInterval(slotEnd, { start: lunchStart, end: lunchEnd }) ||
-    (slotStart < lunchStart && slotEnd > lunchEnd)
-  ) {
+  // La nueva cita no debe cruzarse con el almuerzo
+  const overlapsWithLunch = (
+    (slotStartMinutes >= lunchStartMinutes && slotStartMinutes < lunchEndMinutes) || // Empieza durante almuerzo
+    (slotEndMinutes > lunchStartMinutes && slotEndMinutes <= lunchEndMinutes) ||   // Termina durante almuerzo
+    (slotStartMinutes < lunchStartMinutes && slotEndMinutes > lunchEndMinutes)      // Envuelve el almuerzo
+  );
+
+  if (overlapsWithLunch) {
     return false;
   }
 
-  // Verificar si el slot se sobrepone con otras citas
+  // Obtener la fecha en formato YYYY-MM-DD para comparación
+  const dateStr = format(startOfDay(date), 'yyyy-MM-dd');
+
+  // Verificar si el slot se sobrepone con otras citas existentes
   for (const apt of appointments) {
-    if (apt.date !== format(date, 'yyyy-MM-dd')) continue;
+    // Ignorar citas canceladas
     if (apt.status === 'cancelada') continue;
 
+    // Normalizar la fecha de la cita (asegurar formato YYYY-MM-DD)
+    const aptDateStr = apt.date ? String(apt.date).split('T')[0] : '';
+
+    // Ignorar citas de otros días
+    if (aptDateStr !== dateStr) continue;
+
+    // Calcular el rango de tiempo de la cita existente
     const [aptHour, aptMinute] = apt.time.split(':').map(Number);
-    const aptStart = new Date(date);
-    aptStart.setHours(aptHour, aptMinute, 0, 0);
+    const aptStartMinutes = aptHour * 60 + aptMinute;
+    // Usar la función para obtener la duración completa de la cita existente
+    const aptDuration = getExistingAppointmentDuration(apt);
+    const aptEndMinutes = aptStartMinutes + aptDuration;
 
-    // Usar el tiempo de la cita existente o asumir 1 hora por defecto
-    const aptDuration = apt.baseTimeMinutes || 60;
-    const aptEnd = addMinutes(aptStart, aptDuration);
+    // Verificar superposición: la nueva cita NO debe overlappear con la cita existente
+    // Dos citas se superponen si:
+    // - La nueva empieza antes de que termine la existente Y
+    // - La nueva termina después de que empiece la existente
+    const overlaps = (
+      slotStartMinutes < aptEndMinutes &&  // Nueva empieza antes de que termine la existente
+      slotEndMinutes > aptStartMinutes    // Nueva termina después de que empieza la existente
+    );
 
-    // Verificar superposición
-    if (
-      isWithinInterval(slotStart, { start: aptStart, end: aptEnd }) ||
-      isWithinInterval(slotEnd, { start: aptStart, end: aptEnd }) ||
-      (slotStart <= aptStart && slotEnd >= aptEnd)
-    ) {
+    if (overlaps) {
       return false;
     }
   }
@@ -147,7 +162,7 @@ export default function Calendar({
 
   const totalMinutes = useMemo(
     () => getTotalTimeMinutes(selectedBreed, selectedService, recoveryTimeMinutes),
-    [selectedBreed, selectedService]
+    [selectedBreed, selectedService, recoveryTimeMinutes]
   );
 
   // Cargar citas existentes
@@ -259,44 +274,10 @@ export default function Calendar({
 
       {/* Resumen de selección */}
       {(selected || selectedTime) && (
-        <div className="bg-gray-50 rounded-2xl p-4 space-y-3">
-          <h4 className="text-sm font-semibold text-gray-700">Resumen de tu cita</h4>
-
-          <div className="space-y-2 text-sm">
-            {selectedBreed && (
-              <div className="flex justify-between">
-                <span className="text-gray-500">Mascota:</span>
-                <span className="font-medium">{selectedBreed.emoji} {selectedBreed.name}</span>
-              </div>
-            )}
-
-            {selectedService && (
-              <div className="flex justify-between">
-                <span className="text-gray-500">Servicio:</span>
-                <span className="font-medium">{selectedService.name}</span>
-              </div>
-            )}
-
-            {selected && (
-              <div className="flex justify-between">
-                <span className="text-gray-500">Fecha:</span>
-                <span className="font-medium capitalize">
-                  {format(selected, 'EEEE d', { locale: es })} de {format(selected, 'MMMM', { locale: es })}
-                </span>
-              </div>
-            )}
-
-            {selectedTime && (
-              <div className="flex justify-between">
-                <span className="text-gray-500">Hora:</span>
-                <span className="font-medium">{selectedTime}</span>
-              </div>
-            )}
-
-            <div className="flex justify-between pt-2 border-t border-gray-200">
-              <span className="text-gray-500">Tiempo estimado:</span>
-              <span className="font-bold text-[#E8943D]">{formatTime(totalMinutes)}</span>
-            </div>
+        <div className="bg-gray-50 rounded-2xl p-4">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-500">Tiempo estimado:</span>
+            <span className="font-bold text-[#E8943D]">{formatTime(totalMinutes)}</span>
           </div>
         </div>
       )}

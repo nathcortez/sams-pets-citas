@@ -43,6 +43,8 @@ export interface Appointment {
   // Campos para re-agendamiento
   originalDate?: string; // Fecha original antes de re-agendar
   rescheduleHistory?: RescheduleEntry[]; // Historial de cambios
+  // Foto de la mascota
+  petPhoto?: string; // Foto en base64
 }
 
 export interface BusinessInfo {

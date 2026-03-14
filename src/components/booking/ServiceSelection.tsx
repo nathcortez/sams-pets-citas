@@ -27,7 +27,7 @@ const RECOVERY_SERVICE: Service = {
   id: 'recuperacion-manto',
   name: 'Recuperación de manto',
   icon: '🧶',
-  description: 'Servicio adicional con costo extra',
+  description: '¿Agregar recuperación de manto? (+tiempo extra)',
   additionalTimeMinutes: 45,
 };
 
@@ -50,13 +50,14 @@ export default function ServiceSelection({
 
   const recoveryTime = RECOVERY_SERVICE.additionalTimeMinutes;
 
+  // Solo tiempos adicionales, sin tiempo base
   const totalTime = selectedService
-    ? baseTimeMinutes + selectedService.additionalTimeMinutes + (showRecovery ? recoveryTime : 0)
-    : baseTimeMinutes + (showRecovery ? recoveryTime : 0);
+    ? selectedService.additionalTimeMinutes + (showRecovery ? recoveryTime : 0)
+    : showRecovery ? recoveryTime : 0;
 
   // Filtrar solo los servicios que queremos mostrar
   const filteredServices = SERVICES.filter(s =>
-    ['bano-basico', 'bano-corte', 'paquete-completo'].includes(s.id)
+    ['bano-corte', 'paquete-completo', 'paquete-mensual'].includes(s.id)
   );
 
   return (
@@ -128,15 +129,18 @@ export default function ServiceSelection({
       {selectedService && (
         <div className="bg-[#E8943D]/10 border border-[#E8943D]/30 rounded-xl p-4">
           <p className="text-sm text-center text-gray-700">
-            <span className="font-medium">Tiempo estimado:</span>{' '}
-            {formatTime(baseTimeMinutes)} ({selectedService.name})
+            <span className="font-medium">Tiempo adicional:</span>{' '}
+            <span className="font-bold text-[#E8943D]">
+              {formatTime(selectedService.additionalTimeMinutes)} adicionales
+            </span>
             {showRecovery && (
               <> + {formatTime(recoveryTime)} (Recuperación)</>
             )}
-            {' = '}
-            <span className="font-bold text-[#E8943D]">
-              {formatTime(totalTime)}
-            </span>
+            {showRecovery && (
+              <span className="font-bold text-[#E8943D]">
+                {' = '}{formatTime(totalTime)}
+              </span>
+            )}
           </p>
         </div>
       )}
