@@ -8,9 +8,10 @@ interface BookingSummaryProps {
   appointment: Appointment;
   onSend: () => void;
   isSending: boolean;
+  error?: string | null;
 }
 
-export default function BookingSummary({ appointment, onSend, isSending }: BookingSummaryProps) {
+export default function BookingSummary({ appointment, onSend, isSending, error }: BookingSummaryProps) {
   const formattedDate = format(new Date(appointment.date), "EEEE d 'de' MMMM 'de' yyyy", {
     locale: es,
   }).replace(/De/g, 'de');
@@ -83,6 +84,13 @@ export default function BookingSummary({ appointment, onSend, isSending }: Booki
           </div>
         )}
       </div>
+
+      {/* Error si falla el guardado */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-600 text-center">
+          ⚠️ {error}
+        </div>
+      )}
 
       {/* Botón confirmar — directo, sin WhatsApp */}
       <div className="pt-2">

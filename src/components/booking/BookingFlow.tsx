@@ -34,6 +34,7 @@ export default function BookingFlow() {
     additionalService: false,
   });
   const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [confirmedAppointment, setConfirmedAppointment] = useState<Appointment | null>(null);
 
   const isValidForm = () => {
@@ -131,6 +132,7 @@ export default function BookingFlow() {
     if (!selectedDate || !selectedTime) return;
 
     setIsSending(true);
+    setSendError(null);
 
     try {
       console.log('=== INICIO handleSend() ===');
@@ -219,7 +221,7 @@ export default function BookingFlow() {
       // 3. Crear la cita
       const appointmentData = {
         pet_name: petName,
-        pet_breed_age: formData.petBreedAge,
+        pet_breed_age: formData.petBreedAge || selectedBreed?.name || '',
         pet_breed: selectedBreed?.name,
         pet_breed_emoji: selectedBreed?.emoji,
         pet_size: selectedBreed?.size,
@@ -289,37 +291,10 @@ export default function BookingFlow() {
 
       setConfirmedAppointment(backupAppointment);
       setStep('confirmation');
-    } catch (err) {
+    } catch (err: any) {
       console.error('ERROR EN handleSend():', err);
-      // Guardar en localStorage como fallback
-      const backupAppointment: Appointment = {
-        id: crypto.randomUUID(),
-        createdAt: new Date().toISOString(),
-        petName: petName,
-        petBreedAge: formData.petBreedAge,
-        petBreed: selectedBreed?.name,
-        petBreedEmoji: selectedBreed?.emoji,
-        petSize: selectedBreed?.size,
-        serviceId: selectedService?.id,
-        serviceName: selectedService?.name,
-        serviceAdditionalTime: selectedService?.additionalTimeMinutes,
-        recoveryTime: showRecovery ? 45 : 0,
-        baseTimeMinutes: selectedBreed?.baseTimeMinutes,
-        ownerName: formData.ownerName,
-        whatsapp: formData.whatsapp,
-        comments: formData.comments,
-        additionalService: formData.additionalService,
-        petPhoto: petPhotoData,
-        date: format(selectedDate!, 'yyyy-MM-dd'),
-        time: selectedTime!,
-        status: 'pendiente' as AppointmentStatus,
-      };
-
-      const existing = JSON.parse(localStorage.getItem('sams-pets-appointments') || '[]');
-      localStorage.setItem('sams-pets-appointments', JSON.stringify([...existing, backupAppointment]));
-
-      setConfirmedAppointment(backupAppointment);
-      setStep('confirmation');
+      const msg = err?.message || err?.details || 'Hubo un problema al guardar tu cita. Intenta de nuevo.';
+      setSendError(msg);
     } finally {
       setIsSending(false);
     }
@@ -394,6 +369,7 @@ export default function BookingFlow() {
             }}
             onSend={handleSend}
             isSending={isSending}
+            error={sendError}
           />
         );
       case 'confirmation':
