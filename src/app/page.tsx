@@ -54,7 +54,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center gap-1">
             <span className="text-xl">⏰</span>
-            <span>Lun-Sáb 8:00 - 15:00</span>
+            <span>Lun-Sáb 8:00 - 17:00</span>
           </div>
         </div>
 
