@@ -23,11 +23,11 @@ export default function Home() {
 
         {/* Hero section */}
         <div className="text-center mb-8">
-          <h2 className="text-[2.5rem] font-extrabold text-[#1B3A5C] leading-tight mb-3">
-            Agenda tu cita 🐾
+          <h2 className="text-[2rem] font-extrabold text-[#1B3A5C] leading-tight mb-3 whitespace-nowrap">
+            Sistema de Citas 🐾
           </h2>
-          <p className="text-[#6B6B6B] text-lg">
-            Estética canina profesional en El Progreso, Jutiapa
+          <p className="text-[#6B6B6B] text-base">
+            Estética Canina en El Progreso, Jutiapa
           </p>
         </div>
 
@@ -44,17 +44,14 @@ export default function Home() {
         </div>
 
         {/* Info rápida */}
-        <div className="flex justify-center gap-6 mb-10 text-sm text-[#6B6B6B]">
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-xl">📍</span>
-            <span>El Progreso, Jutiapa</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-xl">📞</span>
+        <div className="flex justify-center items-center gap-6 mb-10 text-sm text-[#6B6B6B]">
+          <div className="flex items-center gap-2">
+            <span>📞</span>
             <span>+502 4903-7428</span>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-xl">⏰</span>
+          <div className="w-px h-4 bg-[#E5E3DE]" />
+          <div className="flex items-center gap-2">
+            <span>⏰</span>
             <span>Lun-Sáb 8:00 - 17:00</span>
           </div>
         </div>
