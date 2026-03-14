@@ -31,13 +31,14 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Imagen decorativa */}
-        <div className="relative w-72 h-72 mx-auto mb-8">
+        {/* Fachada Sam's Pets */}
+        <div className="relative w-full max-w-sm mx-auto mb-8 rounded-2xl overflow-hidden shadow-lg">
           <Image
-            src="/huellas.png"
-            alt="Huellas decorativas"
-            fill
-            className="object-contain opacity-90"
+            src="/fachada-sams-pets.jpeg"
+            alt="Fachada Sam's Pets"
+            width={540}
+            height={368}
+            className="w-full object-cover"
             priority
           />
         </div>
