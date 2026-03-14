@@ -85,32 +85,39 @@ export default function BookingFlow() {
   const uploadPetPhoto = async (appointmentId: string, photoData: string): Promise<string | null> => {
     try {
       const bucketReady = await ensureBucketExists();
-      if (!bucketReady) {
-        console.error('Bucket not available');
-        return null;
+      if (!bucketReady) return null;
+
+      // Convertir base64 a Blob manualmente (evita errores con fetch + data URLs)
+      const [header, base64] = photoData.split(',');
+      const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
+      const binary = atob(base64);
+      const array = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
       }
-      const response = await fetch(photoData);
-      const blob = await response.blob();
-      const timestamp = Date.now();
-      const fileName = `${appointmentId}/${timestamp}.jpg`;
-      const filePath = `pet-photos/${fileName}`;
+      const blob = new Blob([array], { type: mime });
+
+      const fileName = `${appointmentId}/${Date.now()}.jpg`;
       const { error: uploadError } = await supabase.storage
         .from('pet-photos')
-        .upload(filePath, blob, {
+        .upload(`pet-photos/${fileName}`, blob, {
           contentType: 'image/jpeg',
           upsert: false,
         });
+
       if (uploadError) {
         console.error('Error uploading photo:', uploadError);
         return null;
       }
+
       const { data: urlData } = supabase.storage
         .from('pet-photos')
-        .getPublicUrl(filePath);
+        .getPublicUrl(`pet-photos/${fileName}`);
+
       return urlData.publicUrl;
     } catch (err) {
       console.error('Error processing photo:', err);
-      return null;
+      return null; // La foto es opcional — nunca bloquea la cita
     }
   };
 
