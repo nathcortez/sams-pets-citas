@@ -22,7 +22,6 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
   const [activeTab, setActiveTab] = useState<PetSize>('pequeno');
   const [showOtherInput, setShowOtherInput] = useState(false);
   const [otherBreedName, setOtherBreedName] = useState('');
-  const [otherBreedSize, setOtherBreedSize] = useState<PetSize>('pequeno');
 
   const handleBreedSelect = (breed: PetBreed) => {
     setShowOtherInput(false);
@@ -34,8 +33,8 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
       const newBreed: PetBreed = {
         name: otherBreedName.trim(),
         emoji: '🐕',
-        size: otherBreedSize,
-        baseTimeMinutes: BASE_TIME_BY_SIZE[otherBreedSize],
+        size: activeTab, // usa el tamaño ya seleccionado arriba
+        baseTimeMinutes: BASE_TIME_BY_SIZE[activeTab],
       };
       onSelect(newBreed);
       setShowOtherInput(false);
@@ -98,39 +97,20 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
       ) : (
         <div className="bg-gray-50 p-4 rounded-xl space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nombre de la raza
             </label>
+            <p className="text-xs text-[#6B6B6B] mb-2">
+              Tamaño: <span className="font-medium text-[#E8943D]">{formatSizeLabel(activeTab)}</span>
+            </p>
             <input
               type="text"
               value={otherBreedName}
               onChange={(e) => setOtherBreedName(e.target.value)}
               placeholder="Ej: Mestizo, Criollo, etc."
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#E8943D] focus:border-transparent"
+              autoFocus
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tamaño
-            </label>
-            <div className="flex gap-2">
-              {(['pequeno', 'mediano', 'grande'] as PetSize[]).map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setOtherBreedSize(size)}
-                  className={`
-                    flex-1 py-2 rounded-lg text-sm font-medium transition-all
-                    ${otherBreedSize === size
-                      ? 'bg-[#E8943D] text-white'
-                      : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
-                    }
-                  `}
-                >
-                  {formatSizeLabel(size)}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="flex gap-2">
