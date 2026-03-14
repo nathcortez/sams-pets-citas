@@ -5,6 +5,7 @@ import { format, addDays, startOfDay, isSameDay, parseISO, isWithinInterval, add
 import { es } from 'date-fns/locale';
 import { Appointment } from '@/types/appointment';
 import { PetBreed, Service } from '@/types/breed';
+import { supabase } from '@/lib/supabase';
 
 interface CalendarProps {
   selected: Date | undefined;
@@ -150,6 +151,7 @@ export default function Calendar({
 }: CalendarProps) {
   const [internalSelectedTime, setInternalSelectedTime] = useState<string | undefined>();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const days = useMemo(() => getNext14Days(), []);
   const timeSlots = useMemo(() => generateTimeSlots(), []);
 
@@ -168,10 +170,62 @@ export default function Calendar({
   // Cargar citas existentes
   useEffect(() => {
     const loadAppointments = async () => {
-      // Cargar desde localStorage
-      const localAppointments = JSON.parse(localStorage.getItem('sams-pets-appointments') || '[]');
-      setAppointments(localAppointments);
+      try {
+        // Calcular rango de fechas: hoy + 20 días
+        const today = format(new Date(), "yyyy-MM-dd");
+        const future = format(addDays(new Date(), 20), "yyyy-MM-dd");
+
+        const { data, error } = await supabase
+          .from("appointments")
+          .select("id, date, time, status, base_time_minutes, service_additional_time, recovery_time, pet_name, pet_breed, service_name")
+          .gte("date", today)
+          .lte("date", future)
+          .neq("status", "cancelada");
+
+        if (error) {
+          console.error("Error cargando citas desde Supabase:", error);
+          // Fallback a localStorage
+          const local = JSON.parse(localStorage.getItem("sams-pets-appointments") || "[]");
+          setAppointments(local);
+          return;
+        }
+
+        // Mapear snake_case a camelCase para compatibilidad con la interfaz Appointment
+        const mapped = (data || []).map((row: any) => ({
+          id: row.id,
+          date: row.date,
+          time: row.time,
+          status: row.status,
+          baseTimeMinutes: row.base_time_minutes,
+          serviceAdditionalTime: row.service_additional_time,
+          recoveryTime: row.recovery_time,
+          petName: row.pet_name,
+          petBreed: row.pet_breed,
+          serviceName: row.service_name,
+          // Campos requeridos por la interfaz
+          createdAt: "",
+          ownerName: "",
+          whatsapp: "",
+          additionalService: false,
+        }));
+
+        setAppointments(mapped);
+
+        // Cargar días bloqueados
+        const { data: blockedData } = await supabase
+          .from("blocked_dates")
+          .select("date")
+          .gte("date", format(new Date(), "yyyy-MM-dd"))
+          .lte("date", format(addDays(new Date(), 20), "yyyy-MM-dd"));
+
+        setBlockedDates((blockedData || []).map((r: any) => r.date));
+      } catch (err) {
+        console.error("Error en loadAppointments:", err);
+        const local = JSON.parse(localStorage.getItem("sams-pets-appointments") || "[]");
+        setAppointments(local);
+      }
     };
+
     loadAppointments();
   }, []);
 
@@ -209,7 +263,7 @@ export default function Calendar({
           Selecciona un día
         </h3>
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {days.map((day) => {
+          {days.filter(day => !blockedDates.includes(format(day, "yyyy-MM-dd"))).map((day) => {
             const isSelected = selected && isSameDay(day, selected);
             return (
               <button
