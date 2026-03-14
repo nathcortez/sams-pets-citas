@@ -487,14 +487,16 @@ export default function BookingFlow() {
 
       {/* Navigation buttons */}
       <div className="flex gap-3">
-        {step === 'summary' ? (
-          <button
-            onClick={handleBack}
-            className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[#1B3A5C] font-medium rounded-xl transition-colors"
-          >
-            Atrás
-          </button>
-        ) : step === 'pet' ? (
+        {/* Botón Atrás — siempre presente excepto en confirmación */}
+        <button
+          onClick={handleBack}
+          className="flex-1 py-3 px-6 bg-white border-2 border-[#E5E3DE] hover:border-[#E8943D] text-[#1B3A5C] font-semibold rounded-xl transition-all"
+        >
+          ← Atrás
+        </button>
+
+        {/* Botón Continuar — oculto en summary (el envío está dentro de BookingSummary) */}
+        {step !== 'summary' && (
           <button
             onClick={handleNext}
             disabled={!canProceed()}
@@ -508,28 +510,6 @@ export default function BookingFlow() {
           >
             Continuar
           </button>
-        ) : (
-          <>
-            <button
-              onClick={handleBack}
-              className="flex-1 py-3 px-6 bg-gray-100 hover:bg-gray-200 text-[#1B3A5C] font-medium rounded-xl transition-colors"
-            >
-              Atrás
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={!canProceed()}
-              className={`
-                flex-1 py-3 px-6 font-semibold rounded-xl transition-all
-                ${canProceed()
-                  ? 'bg-[#E8943D] hover:bg-[#d4802f] text-white shadow-lg'
-                  : 'bg-[#E8943D]/60 text-white/80 cursor-not-allowed'
-                }
-              `}
-            >
-              Continuar
-            </button>
-          </>
         )}
       </div>
     </div>
