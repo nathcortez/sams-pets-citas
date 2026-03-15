@@ -5,9 +5,14 @@ import { Appointment, AppointmentStatus } from '@/types/appointment';
 import { supabase } from '@/lib/supabase';
 import StatsCard from '@/components/admin/StatsCard';
 import AppointmentList from '@/components/admin/AppointmentList';
+import ClientList, { ClientWithPets } from '@/components/admin/ClientList';
+
+type AdminTab = 'citas' | 'clientes';
 
 export default function AdminPage() {
+  const [activeTab, setActiveTab] = useState<AdminTab>('citas');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [clients, setClients] = useState<ClientWithPets[]>([]);
   const [filter, setFilter] = useState<'all' | AppointmentStatus>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -63,9 +68,84 @@ export default function AdminPage() {
     }
   };
 
+  // Cargar clientes y mascotas
+  const fetchClients = async () => {
+    try {
+      const { data: clientsData, error: clientsError } = await supabase
+        .from('clients')
+        .select('id, name, whatsapp, created_at')
+        .order('created_at', { ascending: false });
+
+      if (clientsError) throw clientsError;
+
+      const { data: petsData, error: petsError } = await supabase
+        .from('pets')
+        .select('id, client_id, name, breed');
+
+      if (petsError) throw petsError;
+
+      const mapped: ClientWithPets[] = (clientsData || []).map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        whatsapp: c.whatsapp,
+        createdAt: c.created_at,
+        pets: (petsData || [])
+          .filter((p: any) => p.client_id === c.id)
+          .map((p: any) => ({ id: p.id, name: p.name, breed: p.breed })),
+      }));
+
+      setClients(mapped);
+    } catch (err) {
+      console.error('Error fetching clients:', err);
+    }
+  };
+
   useEffect(() => {
     fetchAppointments();
+    fetchClients();
   }, []);
+
+  // Eliminar cita
+  const handleDeleteAppointment = async (id: string) => {
+    try {
+      const { error } = await supabase.from('appointments').delete().eq('id', id);
+      if (error) throw error;
+      setAppointments((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      console.error('Error eliminando cita:', err);
+    }
+  };
+
+  // Eliminar cliente (y sus mascotas en cascada, si Supabase lo permite)
+  const handleDeleteClient = async (clientId: string) => {
+    try {
+      // Primero eliminar mascotas del cliente
+      await supabase.from('pets').delete().eq('client_id', clientId);
+      // Luego eliminar el cliente
+      const { error } = await supabase.from('clients').delete().eq('id', clientId);
+      if (error) throw error;
+      setClients((prev) => prev.filter((c) => c.id !== clientId));
+    } catch (err) {
+      console.error('Error eliminando cliente:', err);
+    }
+  };
+
+  // Eliminar mascota
+  const handleDeletePet = async (petId: string, clientId: string) => {
+    try {
+      const { error } = await supabase.from('pets').delete().eq('id', petId);
+      if (error) throw error;
+      setClients((prev) =>
+        prev.map((c) =>
+          c.id === clientId
+            ? { ...c, pets: c.pets.filter((p) => p.id !== petId) }
+            : c
+        )
+      );
+    } catch (err) {
+      console.error('Error eliminando mascota:', err);
+    }
+  };
 
   // Actualizar status en Supabase
   const handleStatusChange = async (id: string, status: AppointmentStatus) => {
@@ -159,30 +239,75 @@ export default function AdminPage() {
           <StatsCard title="Completadas" value={stats.completed} icon="✅" color="green" />
         </div>
 
-        {/* Filters */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {(['all', 'pendiente', 'confirmada', 'completada', 'cancelada'] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`
-                px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors
-                ${filter === f
-                  ? 'bg-[--azul-principal] text-white'
-                  : 'bg-white text-[--gris] hover:bg-gray-100'
-                }
-              `}
-            >
-              {f === 'all' ? 'Todas' : f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
+        {/* Tabs principales */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setActiveTab('citas')}
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+              activeTab === 'citas' ? 'bg-[--azul-principal] text-white' : 'bg-white text-[--gris] hover:bg-gray-100'
+            }`}
+          >
+            📅 Citas
+          </button>
+          <button
+            onClick={() => { setActiveTab('clientes'); fetchClients(); }}
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
+              activeTab === 'clientes' ? 'bg-[--azul-principal] text-white' : 'bg-white text-[--gris] hover:bg-gray-100'
+            }`}
+          >
+            👤 Clientes & Mascotas
+          </button>
         </div>
 
-        {/* Appointment List */}
-        <AppointmentList
-          appointments={filteredAppointments}
-          onStatusChange={handleStatusChange}
-        />
+        {/* Vista Citas */}
+        {activeTab === 'citas' && (
+          <>
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+              {(['all', 'pendiente', 'confirmada', 'completada', 'cancelada'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`
+                    px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors
+                    ${filter === f
+                      ? 'bg-[--azul-principal] text-white'
+                      : 'bg-white text-[--gris] hover:bg-gray-100'
+                    }
+                  `}
+                >
+                  {f === 'all' ? 'Todas' : f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+            <AppointmentList
+              appointments={filteredAppointments}
+              onStatusChange={handleStatusChange}
+              onDelete={handleDeleteAppointment}
+            />
+          </>
+        )}
+
+        {/* Vista Clientes & Mascotas */}
+        {activeTab === 'clientes' && (
+          <>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-gray-500">
+                {clients.length} cliente{clients.length !== 1 ? 's' : ''} registrado{clients.length !== 1 ? 's' : ''}
+              </p>
+              <button
+                onClick={fetchClients}
+                className="text-sm text-[--azul-principal] hover:underline"
+              >
+                🔄 Actualizar
+              </button>
+            </div>
+            <ClientList
+              clients={clients}
+              onDeleteClient={handleDeleteClient}
+              onDeletePet={handleDeletePet}
+            />
+          </>
+        )}
 
         {/* Info */}
         <div className="mt-8 p-4 bg-green-50 rounded-xl">

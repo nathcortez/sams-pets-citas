@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Appointment, AppointmentStatus } from '@/types/appointment';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -7,6 +8,7 @@ import { es } from 'date-fns/locale';
 interface AppointmentListProps {
   appointments: Appointment[];
   onStatusChange: (id: string, status: AppointmentStatus) => void;
+  onDelete?: (id: string) => void;
 }
 
 const statusColors: Record<AppointmentStatus, string> = {
@@ -23,7 +25,9 @@ const statusLabels: Record<AppointmentStatus, string> = {
   cancelada: 'Cancelada',
 };
 
-export default function AppointmentList({ appointments, onStatusChange }: AppointmentListProps) {
+export default function AppointmentList({ appointments, onStatusChange, onDelete }: AppointmentListProps) {
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
   const formatDate = (dateStr: string) => {
     return format(new Date(dateStr), "dd MMM yyyy", { locale: es });
   };
@@ -98,26 +102,54 @@ export default function AppointmentList({ appointments, onStatusChange }: Appoin
             )}
           </div>
 
-          <div className="flex gap-2">
-            <button
-              onClick={() => onStatusChange(appointment.id, 'confirmada')}
-              className="flex-1 py-2 px-3 bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors"
-            >
-              Confirmar
-            </button>
-            <button
-              onClick={() => onStatusChange(appointment.id, 'completada')}
-              className="flex-1 py-2 px-3 bg-green-100 hover:bg-green-200 text-green-700 text-sm font-medium rounded-lg transition-colors"
-            >
-              Completar
-            </button>
-            <button
-              onClick={() => onStatusChange(appointment.id, 'cancelada')}
-              className="flex-1 py-2 px-3 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-lg transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
+          {/* Botones de acción */}
+          {confirmDeleteId === appointment.id ? (
+            <div className="flex gap-2 bg-red-50 border border-red-200 rounded-xl p-3">
+              <p className="text-sm text-red-700 flex-1">¿Eliminar esta cita?</p>
+              <button
+                onClick={() => { onDelete?.(appointment.id); setConfirmDeleteId(null); }}
+                className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Sí, eliminar
+              </button>
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => onStatusChange(appointment.id, 'confirmada')}
+                className="flex-1 py-2 px-3 bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors"
+              >
+                Confirmar
+              </button>
+              <button
+                onClick={() => onStatusChange(appointment.id, 'completada')}
+                className="flex-1 py-2 px-3 bg-green-100 hover:bg-green-200 text-green-700 text-sm font-medium rounded-lg transition-colors"
+              >
+                Completar
+              </button>
+              <button
+                onClick={() => onStatusChange(appointment.id, 'cancelada')}
+                className="flex-1 py-2 px-3 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              {onDelete && (
+                <button
+                  onClick={() => setConfirmDeleteId(appointment.id)}
+                  className="py-2 px-3 bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 text-sm font-medium rounded-lg transition-colors"
+                  title="Eliminar cita"
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </div>
