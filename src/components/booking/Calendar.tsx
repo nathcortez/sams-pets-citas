@@ -17,19 +17,25 @@ interface CalendarProps {
   onTimeSelect?: (time: string) => void;
 }
 
-// Verificar si una fecha es domingo
+// Verificar si una fecha es domingo (0) o sábado (6)
 export function isSunday(date: Date): boolean {
   return getDay(date) === 0;
 }
+export function isSaturday(date: Date): boolean {
+  return getDay(date) === 6;
+}
+export function isWeekend(date: Date): boolean {
+  return isSunday(date) || isSaturday(date);
+}
 
-// Generar los próximos 14 días (excluyendo Domingos)
+// Generar los próximos 14 días (excluyendo Sábados y Domingos)
 function getNext14Days(): Date[] {
   const today = startOfDay(new Date());
   const days: Date[] = [];
   let count = 0;
   while (days.length < 14 && count < 60) {
     const day = addDays(today, count);
-    if (!isSunday(day)) {
+    if (!isWeekend(day)) {
       days.push(day);
     }
     count++;
@@ -84,9 +90,9 @@ function isSlotAvailable(
   const slotStartMinutes = slotHour * 60 + slotMinute;
   const slotEndMinutes = slotStartMinutes + newAppointmentDuration;
 
-  // Horas de almuerzo: 13:00 - 14:00 (bloqueado)
-  const lunchStartMinutes = 13 * 60; // 780
-  const lunchEndMinutes = 14 * 60;   // 840
+  // Horas de almuerzo: 12:00 - 13:00 (bloqueado)
+  const lunchStartMinutes = 12 * 60; // 720
+  const lunchEndMinutes = 13 * 60;   // 780
 
   // Última hora de inicio: 15:00 (3:00 PM)
   const lastPossibleStartMinutes = 15 * 60; // 900
@@ -273,11 +279,11 @@ export default function Calendar({
             return (
               <button
                 key={day.toISOString()}
-                onClick={() => { if (!isSunday(day)) onSelect(day); }}
-                disabled={isSunday(day)}
+                onClick={() => { if (!isWeekend(day)) onSelect(day); }}
+                disabled={isWeekend(day)}
                 className={`
                   flex-shrink-0 w-14 h-20 rounded-2xl flex flex-col items-center justify-center transition-all
-                  ${isSunday(day)
+                  ${isWeekend(day)
                     ? 'bg-gray-100 text-gray-300 cursor-not-allowed opacity-50'
                     : isSelected
                       ? 'bg-[#E8943D] text-white shadow-lg'
