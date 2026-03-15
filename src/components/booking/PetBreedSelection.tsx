@@ -13,6 +13,7 @@ function formatSizeLabel(size: PetSize): string {
   const labels: Record<PetSize, string> = {
     pequeno: 'Pequeño',
     mediano: 'Mediano',
+    intermedio: 'Intermedio',
     grande: 'Grande'
   };
   return labels[size];
@@ -48,7 +49,7 @@ export default function PetBreedSelection({ selectedBreed, onSelect }: PetBreedS
     <div className="space-y-6">
       {/* Tabs de tamaño */}
       <div className="flex gap-2 justify-center">
-        {(['pequeno', 'mediano', 'grande'] as PetSize[]).map((size) => (
+        {(['pequeno', 'mediano', 'intermedio', 'grande'] as PetSize[]).map((size) => (
           <button
             key={size}
             onClick={() => setActiveTab(size)}

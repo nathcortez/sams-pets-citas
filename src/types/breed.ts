@@ -1,4 +1,4 @@
-export type PetSize = 'pequeno' | 'mediano' | 'grande';
+export type PetSize = 'pequeno' | 'mediano' | 'intermedio' | 'grande';
 
 export interface PetBreed {
   name: string;
@@ -9,40 +9,45 @@ export interface PetBreed {
 
 export const PET_BREEDS: Record<PetSize, PetBreed[]> = {
   pequeno: [
-    { name: 'Poodle Toy', emoji: '🐩', size: 'pequeno', baseTimeMinutes: 45 },
-    { name: 'Yorkshire Terrier', emoji: '🐶', size: 'pequeno', baseTimeMinutes: 45 },
-    { name: 'Chihuahua', emoji: '🐕', size: 'pequeno', baseTimeMinutes: 45 },
-    { name: 'Pomerania', emoji: '🐕', size: 'pequeno', baseTimeMinutes: 45 },
-    { name: 'Schnauzer Miniatura', emoji: '🐕', size: 'pequeno', baseTimeMinutes: 45 },
+    { name: 'Chihuahua', emoji: '🐕', size: 'pequeno', baseTimeMinutes: 30 },
+    { name: 'Cachorro', emoji: '🐶', size: 'pequeno', baseTimeMinutes: 30 },
+    { name: 'Mestizo', emoji: '🐕', size: 'pequeno', baseTimeMinutes: 30 },
   ],
   mediano: [
-    { name: 'Cocker Spaniel', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Schnauzer Estándar', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Bulldog Francés', emoji: '🐶', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Beagle', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Bull Terrier', emoji: '🐶', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Shar Pei', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Basset Hound', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Border Collie', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'French Poodle', emoji: '🐩', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Schnauzer', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Yorkie', emoji: '🐶', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Pomerania', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Mestizo', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
     { name: 'Maltés', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
-    { name: 'Bichón Frisé', emoji: '🐩', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Bulldog Francés', emoji: '🐶', size: 'mediano', baseTimeMinutes: 75 },
+    { name: 'Pug', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
     { name: 'Shih Tzu', emoji: '🐕', size: 'mediano', baseTimeMinutes: 75 },
   ],
+  intermedio: [
+    { name: 'Cocker Spaniel', emoji: '🐕', size: 'intermedio', baseTimeMinutes: 90 },
+    { name: 'Beagle', emoji: '🐕', size: 'intermedio', baseTimeMinutes: 90 },
+    { name: 'Pitbull', emoji: '🐕', size: 'intermedio', baseTimeMinutes: 90 },
+    { name: 'Boston Terrier', emoji: '🐶', size: 'intermedio', baseTimeMinutes: 90 },
+    { name: 'Bulldog Inglés', emoji: '🐶', size: 'intermedio', baseTimeMinutes: 90 },
+  ],
   grande: [
-    { name: 'Golden Retriever', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Labrador', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Pastor Australiano', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Shar Pei', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
     { name: 'Pastor Alemán', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Husky Siberiano', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Rottweiler', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Gran Danés', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Samoyedo', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
-    { name: 'Dálmata', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Labrador', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Golden Retriever', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Husky', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Dóberman', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'Boxer', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
+    { name: 'San Bernardo', emoji: '🐕', size: 'grande', baseTimeMinutes: 105 },
   ],
 };
 
 export const BASE_TIME_BY_SIZE: Record<PetSize, number> = {
-  pequeno: 45,
+  pequeno: 30,
   mediano: 75,
+  intermedio: 90,
   grande: 105,
 };
 
