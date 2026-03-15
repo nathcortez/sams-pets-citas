@@ -48,12 +48,12 @@ function getDayName(date: Date): string {
   return format(date, 'EEE', { locale: es }).toUpperCase();
 }
 
-// Generar horarios disponibles entre 8:00 y 15:00 (último inicio a las 3:00 PM)
+// Generar horarios disponibles entre 8:00 y 16:00 (último inicio a las 4:00 PM)
 function generateTimeSlots(): string[] {
   const slots: string[] = [];
-  for (let hour = 8; hour <= 15; hour++) {
+  for (let hour = 8; hour <= 16; hour++) {
     slots.push(`${hour.toString().padStart(2, '0')}:00`);
-    if (hour < 15) {
+    if (hour < 16) {
       slots.push(`${hour.toString().padStart(2, '0')}:30`);
     }
   }
@@ -94,11 +94,19 @@ function isSlotAvailable(
   const lunchStartMinutes = 12 * 60; // 720
   const lunchEndMinutes = 13 * 60;   // 780
 
-  // Última hora de inicio: 15:00 (3:00 PM)
-  const lastPossibleStartMinutes = 15 * 60; // 900
+  // Última hora de inicio: 16:00 (4:00 PM)
+  const lastPossibleStartMinutes = 16 * 60; // 960
+  // Cierre del negocio: 18:00 (6:00 PM) — la cita debe terminar antes de esta hora
+  const endOfBusinessMinutes = 18 * 60; // 1080
 
-  // El horario de inicio no puede ser después de las 15:00
+  // El horario de inicio no puede ser después de las 16:00
   if (slotStartMinutes > lastPossibleStartMinutes) {
+    return false;
+  }
+
+  // La cita completa debe terminar antes de las 18:00
+  // (ej: perro grande de 2h NO puede empezar a las 16:00 → terminaría a las 18:00)
+  if (slotEndMinutes >= endOfBusinessMinutes) {
     return false;
   }
 

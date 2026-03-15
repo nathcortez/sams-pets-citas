@@ -110,19 +110,7 @@ export default function OwnerStep({ formData, onChange, petPhotoData, onPhotoCha
           />
         </div>
 
-        {/* Servicio adicional */}
-        <label className="flex items-center gap-3 cursor-pointer">
-          <div
-            onClick={() => onChange({ ...formData, additionalService: !formData.additionalService })}
-            className={`w-12 h-6 rounded-full transition-colors flex items-center ${formData.additionalService ? "bg-[#E8943D]" : "bg-gray-200"}`}
-          >
-            <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform mx-0.5 ${formData.additionalService ? "translate-x-6" : "translate-x-0"}`} />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-[#1B3A5C]">⚠️ El pelaje está enredado</p>
-            <p className="text-xs text-[#6B6B6B]">Se aplicará tiempo adicional</p>
-          </div>
-        </label>
+
       </div>
     </div>
   );
