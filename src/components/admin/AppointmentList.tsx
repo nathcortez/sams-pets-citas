@@ -52,9 +52,30 @@ export default function AppointmentList({ appointments, onStatusChange }: Appoin
           className="bg-white rounded-2xl p-4 shadow-md"
         >
           <div className="flex justify-between items-start mb-3">
-            <div>
-              <h4 className="font-semibold text-[--azul-oscuro]">{appointment.petName}</h4>
-              <p className="text-sm text-[--gris]">{appointment.petBreedAge}</p>
+            <div className="flex items-center gap-3">
+              {/* Foto de la mascota */}
+              {appointment.petPhoto ? (
+                <img
+                  src={appointment.petPhoto}
+                  alt={appointment.petName}
+                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0 border-2 border-[#E5E3DE]"
+                />
+              ) : (
+                <div className="w-14 h-14 rounded-xl bg-[#FFF4EA] border-2 border-[#E5E3DE] flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">{appointment.petBreedEmoji || '🐾'}</span>
+                </div>
+              )}
+              <div>
+                <h4 className="font-semibold text-[--azul-oscuro]">{appointment.petName}</h4>
+                <p className="text-sm text-[--gris]">
+                  {appointment.petBreed || appointment.petBreedAge}
+                </p>
+                {appointment.petSize && (
+                  <span className="text-xs text-[#E8943D] font-medium capitalize">
+                    {appointment.petSize}
+                  </span>
+                )}
+              </div>
             </div>
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status]}`}>
               {statusLabels[appointment.status]}
