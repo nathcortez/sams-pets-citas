@@ -55,35 +55,34 @@ export default function AppointmentList({ appointments, onStatusChange, onDelete
           key={appointment.id}
           className="bg-white rounded-2xl p-4 shadow-md"
         >
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex items-center gap-3">
-              {/* Foto de la mascota */}
-              {appointment.petPhoto ? (
-                <img
-                  src={appointment.petPhoto}
-                  alt={appointment.petName}
-                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0 border-2 border-[#E5E3DE]"
-                />
-              ) : (
-                <div className="w-14 h-14 rounded-xl bg-[#FFF4EA] border-2 border-[#E5E3DE] flex items-center justify-center flex-shrink-0">
-                  <span className="text-2xl">{appointment.petBreedEmoji || '🐾'}</span>
-                </div>
-              )}
-              <div>
-                <h4 className="font-semibold text-[--azul-oscuro]">{appointment.petName}</h4>
-                <p className="text-sm text-[--gris]">
-                  {appointment.petBreed || appointment.petBreedAge}
-                </p>
-                {appointment.petSize && (
-                  <span className="text-xs text-[#E8943D] font-medium capitalize">
-                    {appointment.petSize}
-                  </span>
-                )}
+          {/* Header: foto + info + selector de estado */}
+          <div className="flex items-start gap-3 mb-3">
+            {appointment.petPhoto ? (
+              <img src={appointment.petPhoto} alt={appointment.petName}
+                className="w-14 h-14 rounded-xl object-cover flex-shrink-0 border-2 border-[#E5E3DE]" />
+            ) : (
+              <div className="w-14 h-14 rounded-xl bg-[#FFF4EA] border-2 border-[#E5E3DE] flex items-center justify-center flex-shrink-0">
+                <span className="text-2xl">{appointment.petBreedEmoji || '🐾'}</span>
               </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h4 className="font-semibold text-[--azul-oscuro]">{appointment.petName}</h4>
+              <p className="text-sm text-[--gris]">{appointment.petBreed || appointment.petBreedAge}</p>
+              {appointment.petSize && (
+                <span className="text-xs text-[#E8943D] font-medium capitalize">{appointment.petSize}</span>
+              )}
             </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status]}`}>
-              {statusLabels[appointment.status]}
-            </span>
+            {/* Selector de estado */}
+            <select
+              value={appointment.status}
+              onChange={(e) => onStatusChange(appointment.id, e.target.value as AppointmentStatus)}
+              className={`text-xs font-semibold px-2 py-1.5 rounded-lg border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E8943D]/40 ${statusColors[appointment.status]}`}
+            >
+              <option value="pendiente">⏳ Pendiente</option>
+              <option value="confirmada">✅ Confirmada</option>
+              <option value="completada">🎉 Realizada</option>
+              <option value="cancelada">❌ Cancelada</option>
+            </select>
           </div>
 
           <div className="flex gap-4 text-sm text-[--azul-oscuro] mb-3">
@@ -94,60 +93,30 @@ export default function AppointmentList({ appointments, onStatusChange, onDelete
           <div className="text-sm text-[--gris] mb-3">
             <p>👤 {appointment.ownerName}</p>
             <p>📱 {appointment.whatsapp}</p>
-            {appointment.additionalService && (
-              <p className="text-[--naranja] font-medium">⚠️ Servicio adicional</p>
-            )}
             {appointment.comments && (
               <p className="text-sm mt-1 italic">📝 {appointment.comments}</p>
             )}
           </div>
 
-          {/* Botones de acción */}
+          {/* Eliminar con confirmación */}
           {confirmDeleteId === appointment.id ? (
             <div className="flex gap-2 bg-red-50 border border-red-200 rounded-xl p-3">
               <p className="text-sm text-red-700 flex-1">¿Eliminar esta cita?</p>
-              <button
-                onClick={() => { onDelete?.(appointment.id); setConfirmDeleteId(null); }}
-                className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors"
-              >
+              <button onClick={() => { onDelete?.(appointment.id); setConfirmDeleteId(null); }}
+                className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors">
                 Sí, eliminar
               </button>
-              <button
-                onClick={() => setConfirmDeleteId(null)}
-                className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Cancelar
+              <button onClick={() => setConfirmDeleteId(null)}
+                className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition-colors">
+                No
               </button>
             </div>
-          ) : (
-            <div className="flex gap-2">
-              <button
-                onClick={() => onStatusChange(appointment.id, 'confirmada')}
-                className="flex-1 py-2 px-3 bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Confirmar
+          ) : onDelete && (
+            <div className="flex justify-end">
+              <button onClick={() => setConfirmDeleteId(appointment.id)}
+                className="py-1.5 px-3 bg-gray-100 hover:bg-red-100 text-gray-400 hover:text-red-600 text-xs rounded-lg transition-colors">
+                🗑️ Eliminar cita
               </button>
-              <button
-                onClick={() => onStatusChange(appointment.id, 'completada')}
-                className="flex-1 py-2 px-3 bg-green-100 hover:bg-green-200 text-green-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Completar
-              </button>
-              <button
-                onClick={() => onStatusChange(appointment.id, 'cancelada')}
-                className="flex-1 py-2 px-3 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-medium rounded-lg transition-colors"
-              >
-                Cancelar
-              </button>
-              {onDelete && (
-                <button
-                  onClick={() => setConfirmDeleteId(appointment.id)}
-                  className="py-2 px-3 bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 text-sm font-medium rounded-lg transition-colors"
-                  title="Eliminar cita"
-                >
-                  🗑️
-                </button>
-              )}
             </div>
           )}
         </div>

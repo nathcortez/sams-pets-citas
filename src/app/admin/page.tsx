@@ -8,8 +8,9 @@ import { supabase } from '@/lib/supabase';
 import StatsCard from '@/components/admin/StatsCard';
 import AppointmentList from '@/components/admin/AppointmentList';
 import ClientList, { ClientWithPets } from '@/components/admin/ClientList';
+import ReportsView from '@/components/admin/ReportsView';
 
-type AdminTab = 'citas' | 'clientes';
+type AdminTab = 'citas' | 'clientes' | 'reportes';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('citas');
@@ -242,23 +243,21 @@ export default function AdminPage() {
         </div>
 
         {/* Tabs principales */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setActiveTab('citas')}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
-              activeTab === 'citas' ? 'bg-[--azul-principal] text-white' : 'bg-white text-[--gris] hover:bg-gray-100'
-            }`}
-          >
-            📅 Citas
-          </button>
-          <button
-            onClick={() => { setActiveTab('clientes'); fetchClients(); }}
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors ${
-              activeTab === 'clientes' ? 'bg-[--azul-principal] text-white' : 'bg-white text-[--gris] hover:bg-gray-100'
-            }`}
-          >
-            👤 Clientes & Mascotas
-          </button>
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+          {([
+            ['citas',     '📅 Citas'],
+            ['clientes',  '👤 Clientes'],
+            ['reportes',  '📊 Reportes'],
+          ] as [AdminTab, string][]).map(([tab, label]) => (
+            <button key={tab}
+              onClick={() => { setActiveTab(tab); if (tab === 'clientes') fetchClients(); }}
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-colors ${
+                activeTab === tab ? 'bg-[--azul-principal] text-white shadow-md' : 'bg-white text-[--gris] hover:bg-gray-100'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
         {/* Vista Citas */}
@@ -309,6 +308,11 @@ export default function AdminPage() {
               onDeletePet={handleDeletePet}
             />
           </>
+        )}
+
+        {/* Vista Reportes */}
+        {activeTab === 'reportes' && (
+          <ReportsView appointments={appointments} />
         )}
 
         {/* Info */}
