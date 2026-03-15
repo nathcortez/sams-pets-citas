@@ -66,59 +66,18 @@ export interface Service {
 
 export const SERVICES: Service[] = [
   {
-    id: 'bano-corte',
-    name: 'Baño + Corte',
+    id: 'grooming-completo',
+    name: 'Grooming Completo',
     icon: '✂️',
-    description: 'Baño completo más corte de pelo al estilo de la raza',
-    additionalTimeMinutes: 30,
-  },
-  {
-    id: 'corte-unas',
-    name: 'Corte de uñas',
-    icon: '💅',
-    description: 'Solo corte y limado de uñas',
-    additionalTimeMinutes: 15,
-  },
-  {
-    id: 'limpieza-oidos',
-    name: 'Limpieza de oídos',
-    icon: '👂',
-    description: 'Limpieza profunda de oídos',
-    additionalTimeMinutes: 15,
-  },
-  {
-    id: 'limpieza-dental',
-    name: 'Limpieza dental',
-    icon: '🦷',
-    description: 'Cepillado dental básico',
-    additionalTimeMinutes: 20,
-  },
-  {
-    id: 'paquete-completo',
-    name: 'Paquete completo',
-    icon: '⭐',
-    description: 'Baño + corte + uñas + oídos',
-    additionalTimeMinutes: 75,
-  },
-  {
-    id: 'paquete-mensual',
-    name: 'Paquete mensual',
-    icon: '📅',
-    description: 'Sesión correspondiente a paquete mensual',
-    additionalTimeMinutes: 75,
-  },
-  {
-    id: 'antipulgas',
-    name: 'Tratamiento antipulgas',
-    icon: '🧴',
-    description: 'Baño medicado antipulgas y garrapatas',
-    additionalTimeMinutes: 45,
-  },
-  {
-    id: 'spa-premium',
-    name: 'Spa premium',
-    icon: '🎀',
-    description: 'Paquete completo + tratamiento de pelo + perfume + bandana',
-    additionalTimeMinutes: 120,
+    description: 'Baño · Corte · Limado de uñas · Limpieza de oídos',
+    additionalTimeMinutes: 0,
   },
 ];
+
+export const RECOVERY_SERVICE: Service = {
+  id: 'recuperacion-manto',
+  name: 'Recuperación de manto',
+  icon: '🧶',
+  description: 'Tratamiento especial para recuperar y nutrir el pelaje',
+  additionalTimeMinutes: 45,
+};
