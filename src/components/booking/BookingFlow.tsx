@@ -275,8 +275,8 @@ export default function BookingFlow() {
         }
       }
 
-      // Guardar en localStorage como backup
-      const backupAppointment: Appointment = {
+      // Objeto de la cita (con foto base64 en memoria para la pantalla de confirmación)
+      const confirmedApt: Appointment = {
         id: data?.id || crypto.randomUUID(),
         createdAt: new Date().toISOString(),
         petName: petName,
@@ -293,16 +293,23 @@ export default function BookingFlow() {
         whatsapp: formData.whatsapp,
         comments: formData.comments,
         additionalService: formData.additionalService,
-        petPhoto: petPhotoUrl || petPhotoData,
+        petPhoto: petPhotoUrl || petPhotoData, // base64 solo en memoria, no en localStorage
         date: format(selectedDate, 'yyyy-MM-dd'),
         time: selectedTime,
         status: 'pendiente' as AppointmentStatus,
       };
 
-      const existing = JSON.parse(localStorage.getItem('sams-pets-appointments') || '[]');
-      localStorage.setItem('sams-pets-appointments', JSON.stringify([...existing, backupAppointment]));
+      // Guardar en localStorage como backup — SIN la foto (el base64 es muy pesado)
+      try {
+        const backupApt = { ...confirmedApt, petPhoto: petPhotoUrl || undefined };
+        const existing = JSON.parse(localStorage.getItem('sams-pets-appointments') || '[]');
+        localStorage.setItem('sams-pets-appointments', JSON.stringify([...existing, backupApt]));
+      } catch (storageErr) {
+        // Quota excedida u otro error de Storage — no es crítico, Supabase ya tiene la cita
+        console.warn('localStorage backup fallido (no crítico):', storageErr);
+      }
 
-      setConfirmedAppointment(backupAppointment);
+      setConfirmedAppointment(confirmedApt);
       setStep('confirmation');
     } catch (err: any) {
       console.error('ERROR EN handleSend():', err);
