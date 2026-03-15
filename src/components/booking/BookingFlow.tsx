@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { supabase } from '@/lib/supabase';
-import Calendar from './Calendar';
+import Calendar, { isSunday } from './Calendar';
 import PetStep from './PetStep';
 import OwnerStep from './OwnerStep';
 import BookingSummary from './BookingSummary';
@@ -137,6 +137,12 @@ export default function BookingFlow() {
 
   const handleSend = async () => {
     if (!selectedDate || !selectedTime) return;
+
+    // Guardia: no permitir citas en domingo bajo ninguna circunstancia
+    if (isSunday(selectedDate)) {
+      setSendError('No se pueden agendar citas los domingos. Por favor selecciona otro día.');
+      return;
+    }
 
     setIsSending(true);
     setSendError(null);

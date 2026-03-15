@@ -17,6 +17,11 @@ interface CalendarProps {
   onTimeSelect?: (time: string) => void;
 }
 
+// Verificar si una fecha es domingo
+export function isSunday(date: Date): boolean {
+  return getDay(date) === 0;
+}
+
 // Generar los próximos 14 días (excluyendo Domingos)
 function getNext14Days(): Date[] {
   const today = startOfDay(new Date());
@@ -24,7 +29,7 @@ function getNext14Days(): Date[] {
   let count = 0;
   while (days.length < 14 && count < 60) {
     const day = addDays(today, count);
-    if (getDay(day) !== 0) { // 0 = Domingo
+    if (!isSunday(day)) {
       days.push(day);
     }
     count++;
@@ -268,12 +273,15 @@ export default function Calendar({
             return (
               <button
                 key={day.toISOString()}
-                onClick={() => onSelect(day)}
+                onClick={() => { if (!isSunday(day)) onSelect(day); }}
+                disabled={isSunday(day)}
                 className={`
                   flex-shrink-0 w-14 h-20 rounded-2xl flex flex-col items-center justify-center transition-all
-                  ${isSelected
-                    ? 'bg-[#E8943D] text-white shadow-lg'
-                    : 'bg-white border-2 border-gray-100 hover:border-[#E8943D]/50 text-gray-700'
+                  ${isSunday(day)
+                    ? 'bg-gray-100 text-gray-300 cursor-not-allowed opacity-50'
+                    : isSelected
+                      ? 'bg-[#E8943D] text-white shadow-lg'
+                      : 'bg-white border-2 border-gray-100 hover:border-[#E8943D]/50 text-gray-700'
                   }
                 `}
               >
