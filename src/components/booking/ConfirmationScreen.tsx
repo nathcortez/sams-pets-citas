@@ -1,7 +1,7 @@
 'use client';
 
 import { Appointment, BUSINESS_INFO } from '@/types/appointment';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 interface ConfirmationScreenProps {
@@ -9,7 +9,9 @@ interface ConfirmationScreenProps {
 }
 
 export default function ConfirmationScreen({ appointment }: ConfirmationScreenProps) {
-  const formattedDate = format(parseISO(appointment.date), "EEEE d 'de' MMMM", { locale: es });
+  // Parsear como hora local para evitar desfase por timezone (UTC-6 Guatemala)
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const formattedDate = format(new Date(year, month - 1, day), "EEEE d 'de' MMMM", { locale: es });
   const formattedTime = () => {
     const [hour, minute] = appointment.time.split(':').map(Number);
     const period = hour >= 12 ? 'PM' : 'AM';

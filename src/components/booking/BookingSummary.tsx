@@ -12,7 +12,9 @@ interface BookingSummaryProps {
 }
 
 export default function BookingSummary({ appointment, onSend, isSending, error }: BookingSummaryProps) {
-  const formattedDate = format(new Date(appointment.date), "EEEE d 'de' MMMM 'de' yyyy", {
+  // Parsear la fecha como hora local (no UTC) para evitar desfase por timezone
+  const [year, month, day] = appointment.date.split('-').map(Number);
+  const formattedDate = format(new Date(year, month - 1, day), "EEEE d 'de' MMMM 'de' yyyy", {
     locale: es,
   }).replace(/De/g, 'de');
 
