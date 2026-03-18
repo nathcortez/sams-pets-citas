@@ -53,7 +53,7 @@ export default function Home() {
           <div className="w-px h-4 bg-[#E5E3DE]" />
           <div className="flex items-center gap-1.5">
             <span>⏰</span>
-            <span>Lun-Sáb 8:00 - 17:00</span>
+            <span>Lun-Vie 8:00 - 17:00</span>
           </div>
         </div>
 
