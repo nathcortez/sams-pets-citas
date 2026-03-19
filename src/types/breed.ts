@@ -81,3 +81,11 @@ export const RECOVERY_SERVICE: Service = {
   description: 'Tratamiento especial para recuperar y nutrir el pelaje',
   additionalTimeMinutes: 45,
 };
+
+export const CORTE_DEFINIDO_SERVICE: Service = {
+  id: 'corte-definido',
+  name: 'Corte definido',
+  icon: '✂️',
+  description: 'Acabado con líneas precisas y definición del corte',
+  additionalTimeMinutes: 30,
+};

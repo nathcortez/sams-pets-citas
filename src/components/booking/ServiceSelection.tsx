@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Service, SERVICES, RECOVERY_SERVICE } from '@/types/breed';
+import { Service, SERVICES, RECOVERY_SERVICE, CORTE_DEFINIDO_SERVICE } from '@/types/breed';
 
 interface ServiceSelectionProps {
   selectedService?: Service;
@@ -9,6 +9,8 @@ interface ServiceSelectionProps {
   onSelect: (service: Service) => void;
   showRecovery?: boolean;
   onRecoveryChange?: (show: boolean) => void;
+  showCorteDefinido?: boolean;
+  onCorteDefinidoChange?: (show: boolean) => void;
 }
 
 function formatTime(minutes: number): string {
@@ -32,6 +34,8 @@ export default function ServiceSelection({
   onSelect,
   showRecovery = false,
   onRecoveryChange,
+  showCorteDefinido = false,
+  onCorteDefinidoChange,
 }: ServiceSelectionProps) {
   const groomingService = SERVICES[0]; // grooming-completo
 
@@ -42,7 +46,9 @@ export default function ServiceSelection({
     }
   }, []);
 
-  const totalTime = baseTimeMinutes + (showRecovery ? RECOVERY_SERVICE.additionalTimeMinutes : 0);
+  const totalTime = baseTimeMinutes
+    + (showRecovery ? RECOVERY_SERVICE.additionalTimeMinutes : 0)
+    + (showCorteDefinido ? CORTE_DEFINIDO_SERVICE.additionalTimeMinutes : 0);
 
   return (
     <div className="space-y-5">
@@ -74,44 +80,82 @@ export default function ServiceSelection({
         </div>
       </div>
 
-      {/* Toggle Recuperación de manto */}
+      {/* Servicios adicionales (opcionales) */}
       <div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
-          Servicio adicional (opcional)
+          Servicios adicionales (opcionales)
         </p>
-        <button
-          type="button"
-          onClick={() => onRecoveryChange?.(!showRecovery)}
-          className={`
-            w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left
-            ${showRecovery
-              ? 'border-[#E8943D] bg-[#E8943D]/10'
-              : 'border-gray-200 hover:border-[#E8943D]/40 bg-white'
-            }
-          `}
-        >
-          <span className="text-3xl flex-shrink-0">{RECOVERY_SERVICE.icon}</span>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-gray-900 text-sm">{RECOVERY_SERVICE.name}</span>
-              <span className="text-sm font-bold text-[#E8943D]">
-                +{formatTime(RECOVERY_SERVICE.additionalTimeMinutes)}
-              </span>
+        <div className="space-y-3">
+
+          {/* Toggle Recuperación de manto */}
+          <button
+            type="button"
+            onClick={() => onRecoveryChange?.(!showRecovery)}
+            className={`
+              w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left
+              ${showRecovery
+                ? 'border-[#E8943D] bg-[#E8943D]/10'
+                : 'border-gray-200 hover:border-[#E8943D]/40 bg-white'
+              }
+            `}
+          >
+            <span className="text-3xl flex-shrink-0">{RECOVERY_SERVICE.icon}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-900 text-sm">{RECOVERY_SERVICE.name}</span>
+                <span className="text-sm font-bold text-[#E8943D]">
+                  +{formatTime(RECOVERY_SERVICE.additionalTimeMinutes)}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">{RECOVERY_SERVICE.description}</p>
             </div>
-            <p className="text-xs text-gray-500 mt-0.5">{RECOVERY_SERVICE.description}</p>
-          </div>
-          {/* Checkbox */}
-          <div className={`
-            flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all
-            ${showRecovery ? 'bg-[#E8943D] border-[#E8943D]' : 'border-gray-300 bg-white'}
-          `}>
-            {showRecovery && (
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            )}
-          </div>
-        </button>
+            <div className={`
+              flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all
+              ${showRecovery ? 'bg-[#E8943D] border-[#E8943D]' : 'border-gray-300 bg-white'}
+            `}>
+              {showRecovery && (
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
+          </button>
+
+          {/* Toggle Corte definido */}
+          <button
+            type="button"
+            onClick={() => onCorteDefinidoChange?.(!showCorteDefinido)}
+            className={`
+              w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all text-left
+              ${showCorteDefinido
+                ? 'border-[#E8943D] bg-[#E8943D]/10'
+                : 'border-gray-200 hover:border-[#E8943D]/40 bg-white'
+              }
+            `}
+          >
+            <span className="text-3xl flex-shrink-0">{CORTE_DEFINIDO_SERVICE.icon}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-gray-900 text-sm">{CORTE_DEFINIDO_SERVICE.name}</span>
+                <span className="text-sm font-bold text-[#E8943D]">
+                  +{formatTime(CORTE_DEFINIDO_SERVICE.additionalTimeMinutes)}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">{CORTE_DEFINIDO_SERVICE.description}</p>
+            </div>
+            <div className={`
+              flex-shrink-0 w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all
+              ${showCorteDefinido ? 'bg-[#E8943D] border-[#E8943D]' : 'border-gray-300 bg-white'}
+            `}>
+              {showCorteDefinido && (
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
+          </button>
+
+        </div>
       </div>
 
       {/* Resumen de tiempo total */}

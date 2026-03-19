@@ -22,6 +22,7 @@ export default function BookingFlow() {
   const [petName, setPetName] = useState('');
   const [selectedService, setSelectedService] = useState<Service | undefined>();
   const [showRecovery, setShowRecovery] = useState(false);
+  const [showCorteDefinido, setShowCorteDefinido] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [petPhotoData, setPetPhotoData] = useState<string | undefined>();
@@ -241,7 +242,7 @@ export default function BookingFlow() {
         base_time_minutes: selectedBreed?.baseTimeMinutes,
         service_id: selectedService?.id,
         service_name: selectedService?.name,
-        service_additional_time: selectedService?.additionalTimeMinutes,
+        service_additional_time: (selectedService?.additionalTimeMinutes || 0) + (showCorteDefinido ? 30 : 0),
         recovery_time: showRecovery ? 45 : 0,
         owner_name: formData.ownerName,
         whatsapp: formData.whatsapp,
@@ -286,7 +287,7 @@ export default function BookingFlow() {
         petSize: selectedBreed?.size,
         serviceId: selectedService?.id,
         serviceName: selectedService?.name,
-        serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+        serviceAdditionalTime: (selectedService?.additionalTimeMinutes || 0) + (showCorteDefinido ? 30 : 0),
         recoveryTime: showRecovery ? 45 : 0,
         baseTimeMinutes: selectedBreed?.baseTimeMinutes,
         ownerName: formData.ownerName,
@@ -339,6 +340,8 @@ export default function BookingFlow() {
             onSelect={setSelectedService}
             showRecovery={showRecovery}
             onRecoveryChange={setShowRecovery}
+            showCorteDefinido={showCorteDefinido}
+            onCorteDefinidoChange={setShowCorteDefinido}
           />
         );
       case 'calendar':
@@ -348,7 +351,7 @@ export default function BookingFlow() {
             onSelect={setSelectedDate}
             selectedBreed={selectedBreed}
             selectedService={selectedService}
-            recoveryTimeMinutes={showRecovery ? 45 : 0}
+            recoveryTimeMinutes={(showRecovery ? 45 : 0) + (showCorteDefinido ? 30 : 0)}
             selectedTime={selectedTime}
             onTimeSelect={setSelectedTime}
           />
@@ -375,7 +378,7 @@ export default function BookingFlow() {
               petSize: selectedBreed?.size,
               serviceId: selectedService?.id,
               serviceName: selectedService?.name,
-              serviceAdditionalTime: selectedService?.additionalTimeMinutes,
+              serviceAdditionalTime: (selectedService?.additionalTimeMinutes || 0) + (showCorteDefinido ? 30 : 0),
               recoveryTime: showRecovery ? 45 : 0,
               baseTimeMinutes: selectedBreed?.baseTimeMinutes,
               ownerName: formData.ownerName,
