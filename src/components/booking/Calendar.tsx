@@ -68,13 +68,13 @@ function getTotalTimeMinutes(breed?: PetBreed, service?: Service, recoveryMinute
   return baseTime + serviceTime + recoveryTime;
 }
 
-// Calcular la duración total de una cita existente en la base de datos
+// Calcular la duración total de una cita existente en la base de datos.
+// Default 30 min (= 1 slot) para que una cita a las 14:30 termine a las 15:00
+// exacto y no bloquee el slot de las 15:00. Si base_time_minutes está guardado
+// en BD, se usa ese valor.
 function getExistingAppointmentDuration(apt: Appointment): number {
-  // Tiempo base de la raza (default 60 min si no está definido)
-  const baseTime = apt.baseTimeMinutes || 60;
-  // Tiempo adicional del servicio
+  const baseTime = apt.baseTimeMinutes || 30;
   const serviceTime = apt.serviceAdditionalTime || 0;
-  // Tiempo de recuperación de manto (si aplica)
   const recoveryTime = apt.recoveryTime || 0;
   return baseTime + serviceTime + recoveryTime;
 }
