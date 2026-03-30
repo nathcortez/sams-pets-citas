@@ -124,36 +124,14 @@ function isSlotAvailable(
   // Obtener la fecha en formato YYYY-MM-DD para comparación
   const dateStr = format(startOfDay(date), 'yyyy-MM-dd');
 
-  // Verificar si el slot se sobrepone con otras citas existentes
+  // Verificar si el slot está ocupado por otra cita existente.
+  // Bloqueamos SOLO si hay una cita a ESA HORA EXACTA — ignoramos base_time_minutes
+  // para no bloquear el slot siguiente (cita 14:30 no debe bloquear 15:00).
   for (const apt of appointments) {
-    // Ignorar citas canceladas
     if (apt.status === 'cancelada') continue;
-
-    // Normalizar la fecha de la cita (asegurar formato YYYY-MM-DD)
     const aptDateStr = apt.date ? String(apt.date).split('T')[0] : '';
-
-    // Ignorar citas de otros días
     if (aptDateStr !== dateStr) continue;
-
-    // Calcular el rango de tiempo de la cita existente
-    const [aptHour, aptMinute] = apt.time.split(':').map(Number);
-    const aptStartMinutes = aptHour * 60 + aptMinute;
-    // Usar la función para obtener la duración completa de la cita existente
-    const aptDuration = getExistingAppointmentDuration(apt);
-    const aptEndMinutes = aptStartMinutes + aptDuration;
-
-    // Verificar superposición: la nueva cita NO debe overlappear con la cita existente
-    // Dos citas se superponen si:
-    // - La nueva empieza antes de que termine la existente Y
-    // - La nueva termina después de que empiece la existente
-    const overlaps = (
-      slotStartMinutes < aptEndMinutes &&  // Nueva empieza antes de que termine la existente
-      slotEndMinutes > aptStartMinutes    // Nueva termina después de que empieza la existente
-    );
-
-    if (overlaps) {
-      return false;
-    }
+    if (apt.time === slot) return false;
   }
 
   return true;
