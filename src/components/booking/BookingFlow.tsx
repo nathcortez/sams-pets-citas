@@ -107,7 +107,7 @@ const isWeekendDate = (date: Date | undefined): boolean => {
       const fileName = `${appointmentId}/${Date.now()}.jpg`;
       const { error: uploadError } = await supabase.storage
         .from('pet-photos')
-        .upload(`pet-photos/${fileName}`, blob, {
+        .upload(fileName, blob, {
           contentType: 'image/jpeg',
           upsert: false,
         });
@@ -117,9 +117,9 @@ const isWeekendDate = (date: Date | undefined): boolean => {
         return null;
       }
 
-      const { data: urlData } = supabase.storage
+  const { data: urlData } = supabase.storage
         .from('pet-photos')
-        .getPublicUrl(`pet-photos/${fileName}`);
+        .getPublicUrl(fileName);
 
       return urlData.publicUrl;
     } catch (err) {

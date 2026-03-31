@@ -67,12 +67,12 @@ export const BUSINESS_INFO: BusinessInfo = {
 
 export const TIME_SLOTS = [
   '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
-  '12:00', '12:30', '14:00', '14:30', '15:00'
+  '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00'
 ];
 
 export const SERVICE_HOURS = {
   start: '08:00',
-  lunchStart: '13:00',
-  lunchEnd: '14:00',
-  lastAppointment: '15:00',
+  lunchStart: '12:00',
+  lunchEnd: '13:00',
+  lastAppointment: '16:00',
 };
