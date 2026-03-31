@@ -106,17 +106,11 @@ function isSlotAvailable(
     return false;
   }
 
-  // La nueva cita no debe cruzarse con el almuerzo
+  // La nueva cita no debe cruzarse con el almuerzo (12:00 - 13:00)
   const overlapsWithLunch = (
-    (slotStartMinutes >= lunchStartMinutes && slotStartMinutes < lunchEndMinutes) ||
-    (slotEndMinutes > lunchStartMinutes && slotEndMinutes <= lunchEndMinutes) ||
-    (slotStartMinutes < lunchStartMinutes && slotEndMinutes > lunchEndMinutes)
+    slotStartMinutes < lunchEndMinutes && slotEndMinutes > lunchStartMinutes
   );
-
-  if (overlapsWithLunch) {
-    return false;
-  }
-
+  
   // Obtener la fecha en formato YYYY-MM-DD
   const dateStr = format(startOfDay(date), 'yyyy-MM-dd');
 
