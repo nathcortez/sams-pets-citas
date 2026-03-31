@@ -48,7 +48,7 @@ function getDayName(date: Date): string {
   return format(date, 'EEE', { locale: es }).toUpperCase();
 }
 
-// Generar horarios disponibles entre 8:00 y 16:00 (último inicio a las 4:00 PM)
+// Generar horarios disponibles entre 8:00 y 16:00
 function generateTimeSlots(): string[] {
   const slots: string[] = [];
   for (let hour = 8; hour <= 16; hour++) {
@@ -68,10 +68,7 @@ function getTotalTimeMinutes(breed?: PetBreed, service?: Service, recoveryMinute
   return baseTime + serviceTime + recoveryTime;
 }
 
-// Calcular la duración total de una cita existente en la base de datos.
-// Default 30 min (= 1 slot) para que una cita a las 14:30 termine a las 15:00
-// exacto y no bloquee el slot de las 15:00. Si base_time_minutes está guardado
-// en BD, se usa ese valor.
+// Calcular la duración total de una cita existente en la base de datos
 function getExistingAppointmentDuration(apt: Appointment): number {
   const baseTime = apt.baseTimeMinutes || 30;
   const serviceTime = apt.serviceAdditionalTime || 0;
@@ -91,13 +88,13 @@ function isSlotAvailable(
   const slotEndMinutes = slotStartMinutes + newAppointmentDuration;
 
   // Horas de almuerzo: 12:00 - 13:00 (bloqueado)
-  const lunchStartMinutes = 12 * 60; // 720
-  const lunchEndMinutes = 13 * 60;   // 780
+  const lunchStartMinutes = 12 * 60;
+  const lunchEndMinutes = 13 * 60;
 
-  // Última hora de inicio: 16:00 (4:00 PM)
-  const lastPossibleStartMinutes = 16 * 60; // 960
-  // Cierre del negocio: 18:00 (6:00 PM) — la cita debe terminar antes de esta hora
-  const endOfBusinessMinutes = 18 * 60; // 1080
+  // Última hora de inicio: 16:00
+  const lastPossibleStartMinutes = 16 * 60;
+  // Cierre del negocio: 18:00
+  const endOfBusinessMinutes = 18 * 60;
 
   // El horario de inicio no puede ser después de las 16:00
   if (slotStartMinutes > lastPossibleStartMinutes) {
@@ -105,36 +102,45 @@ function isSlotAvailable(
   }
 
   // La cita completa debe terminar antes de las 18:00
-  // (ej: perro grande de 2h NO puede empezar a las 16:00 → terminaría a las 18:00)
   if (slotEndMinutes >= endOfBusinessMinutes) {
     return false;
   }
 
   // La nueva cita no debe cruzarse con el almuerzo
   const overlapsWithLunch = (
-    (slotStartMinutes >= lunchStartMinutes && slotStartMinutes < lunchEndMinutes) || // Empieza durante almuerzo
-    (slotEndMinutes > lunchStartMinutes && slotEndMinutes <= lunchEndMinutes) ||   // Termina durante almuerzo
-    (slotStartMinutes < lunchStartMinutes && slotEndMinutes > lunchEndMinutes)      // Envuelve el almuerzo
+    (slotStartMinutes >= lunchStartMinutes && slotStartMinutes < lunchEndMinutes) ||
+    (slotEndMinutes > lunchStartMinutes && slotEndMinutes <= lunchEndMinutes) ||
+    (slotStartMinutes < lunchStartMinutes && slotEndMinutes > lunchEndMinutes)
   );
 
   if (overlapsWithLunch) {
     return false;
   }
 
-  // Obtener la fecha en formato YYYY-MM-DD para comparación
+  // Obtener la fecha en formato YYYY-MM-DD
   const dateStr = format(startOfDay(date), 'yyyy-MM-dd');
 
-  // Verificar si el slot está ocupado por otra cita existente.
-  // Bloqueamos SOLO si hay una cita a ESA HORA EXACTA — ignoramos base_time_minutes
-  // para no bloquear el slot siguiente (cita 14:30 no debe bloquear 15:00).
+  // Verificar solapamiento con citas existentes considerando su duración real
   for (const apt of appointments) {
     if (apt.status === 'cancelada') continue;
     const aptDateStr = apt.date ? String(apt.date).split('T')[0] : '';
     if (aptDateStr !== dateStr) continue;
-    if (apt.time === slot) return false;
+
+    // Calcular duración real de la cita existente
+    const aptDuration = getExistingAppointmentDuration(apt);
+    const [aptHour, aptMinute] = apt.time.split(':').map(Number);
+    const aptStartMinutes = aptHour * 60 + aptMinute;
+    const aptEndMinutes = aptStartMinutes + aptDuration;
+
+    // Bloquear si hay solapamiento
+    const newStart = slotStartMinutes;
+    const newEnd = slotEndMinutes;
+
+    const overlaps = newStart < aptEndMinutes && newEnd > aptStartMinutes;
+    if (overlaps) return false;
   }
 
-  return true;
+  return true; // ✅ Sin solapamientos, slot disponible
 }
 
 export default function Calendar({
@@ -168,7 +174,6 @@ export default function Calendar({
   useEffect(() => {
     const loadAppointments = async () => {
       try {
-        // Calcular rango de fechas: hoy + 20 días
         const today = format(new Date(), "yyyy-MM-dd");
         const future = format(addDays(new Date(), 20), "yyyy-MM-dd");
 
@@ -181,13 +186,11 @@ export default function Calendar({
 
         if (error) {
           console.error("Error cargando citas desde Supabase:", error);
-          // Fallback a localStorage
           const local = JSON.parse(localStorage.getItem("sams-pets-appointments") || "[]");
           setAppointments(local);
           return;
         }
 
-        // Mapear snake_case a camelCase para compatibilidad con la interfaz Appointment
         const mapped = (data || []).map((row: any) => ({
           id: row.id,
           date: row.date,
@@ -199,7 +202,6 @@ export default function Calendar({
           petName: row.pet_name,
           petBreed: row.pet_breed,
           serviceName: row.service_name,
-          // Campos requeridos por la interfaz
           createdAt: "",
           ownerName: "",
           whatsapp: "",
@@ -208,7 +210,6 @@ export default function Calendar({
 
         setAppointments(mapped);
 
-        // Cargar días bloqueados
         const { data: blockedData } = await supabase
           .from("blocked_dates")
           .select("date")
@@ -239,7 +240,6 @@ export default function Calendar({
     }));
   }, [selected, timeSlots, totalMinutes, appointments]);
 
-  // Solo horarios disponibles (sin los no disponibles)
   const onlyAvailableSlots = useMemo(() => {
     return availableSlots.filter(slot => slot.available);
   }, [availableSlots]);
