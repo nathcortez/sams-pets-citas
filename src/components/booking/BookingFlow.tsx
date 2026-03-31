@@ -45,6 +45,12 @@ export default function BookingFlow() {
     );
   };
 
+const isWeekendDate = (date: Date | undefined): boolean => {
+    if (!date) return false;
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  };
+
   const handleNext = () => {
     if (step === 'pet' && selectedBreed && petName.trim()) {
       setStep('service');
@@ -408,7 +414,7 @@ export default function BookingFlow() {
       case 'service':
         return !!selectedService;
       case 'calendar':
-        return !!selectedDate && !!selectedTime;
+        return !!selectedDate && !!selectedTime && !isWeekendDate(selectedDate);
       case 'owner':
         return isValidForm();
       case 'summary':
